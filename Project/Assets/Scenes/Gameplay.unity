@@ -439,7 +439,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TowerDefence.Game.Controls.ControlsBridge
   joystick: {fileID: 145911606}
   attackButton: {fileID: 786072524}
-  movement: {fileID: 7039480469477668552}
   deadZone: 0.1
 --- !u!1 &615650791
 GameObject:
@@ -1062,6 +1061,53 @@ MonoBehaviour:
     Time: 0.6
     Smoothing: 2.09
     IgnoreY: 1
+--- !u!1 &1554646293
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1554646295}
+  - component: {fileID: 1554646294}
+  m_Layer: 0
+  m_Name: GameRules
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1554646294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1554646293}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79b06a619fc843e48bacf53a919e247a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TowerDefence.Game.Rules.TestGameRule
+  teamSettings: {fileID: 11400000, guid: e5dfd1fcc54c7984a8435db7641e9d8b, type: 2}
+  player: {fileID: 7039480469477668557}
+  uiControls: {fileID: 440072174}
+--- !u!4 &1554646295
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1554646293}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1581173370
 GameObject:
   m_ObjectHideFlags: 0
@@ -1562,7 +1608,7 @@ MonoBehaviour:
   IgnoreTimeScale: 0
   WorldUpOverride: {fileID: 0}
   ChannelMask: -1
-  UpdateMethod: 2
+  UpdateMethod: 0
   BlendUpdateMethod: 1
   LensModeOverride:
     Enabled: 0
@@ -1633,10 +1679,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 7179354384921803027, guid: ad77caf157811c745b527a093d56b2cb, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 3bb8da5552737324789d42355dce0dba, type: 2}
     - target: {fileID: 8007083626237772040, guid: ad77caf157811c745b527a093d56b2cb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
@@ -1649,33 +1691,30 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 9197352589778293449, guid: ad77caf157811c745b527a093d56b2cb, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 3bb8da5552737324789d42355dce0dba, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ad77caf157811c745b527a093d56b2cb, type: 3}
---- !u!114 &7039480469477668552 stripped
+--- !u!114 &7039480469477668557 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1117733476266689367, guid: ad77caf157811c745b527a093d56b2cb, type: 3}
+  m_CorrespondingSourceObject: {fileID: 609533104836213543, guid: ad77caf157811c745b527a093d56b2cb, type: 3}
   m_PrefabInstance: {fileID: 7039480469477668551}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a0e0a4d60a9f4a2aa836f31c980548a2, type: 3}
+  m_Script: {fileID: 11500000, guid: e5156fc74dc445a4db922cb7b6b6b2fe, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TowerDefence.Game.Movement
+  m_EditorClassIdentifier: Assembly-CSharp::TowerDefence.Game.Player
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 2047213011}
+  - {fileID: 1453151584}
   - {fileID: 1018038282}
   - {fileID: 440072173}
   - {fileID: 826920279}
   - {fileID: 1680417631}
-  - {fileID: 1453151584}
+  - {fileID: 1554646295}
