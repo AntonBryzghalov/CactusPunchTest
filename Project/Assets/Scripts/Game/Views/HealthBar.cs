@@ -1,4 +1,6 @@
+using TowerDefence.Game.Health;
 using TowerDefence.Game.Settings;
+using TowerDefence.Game.Units;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,9 +11,9 @@ namespace TowerDefence.Game.Views
         [SerializeField] private Image healthBarImage;
         [SerializeField] private HealthSettings settings;
 
-        private Health _health;
+        private HealthComponent _health;
 
-        public void BindHealthComponent(Health health)
+        public void BindHealthComponent(HealthComponent health)
         {
             if (_health != null)
             {
@@ -40,9 +42,9 @@ namespace TowerDefence.Game.Views
             }
         }
 
-        private void OnHealthChanged(int current, int max)
+        private void OnHealthChanged(float current, float max)
         {
-            var progress = (float)current/max;
+            var progress = current/max;
             healthBarImage.fillAmount = progress;
             healthBarImage.color = Color.Lerp(settings.MinHealthColor, settings.MaxHealthColor, progress);
         }

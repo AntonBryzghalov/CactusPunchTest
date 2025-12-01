@@ -1,31 +1,28 @@
 using System;
-using TowerDefence.Game.Settings;
 using UnityEngine;
 
-namespace TowerDefence.Game
+namespace TowerDefence.Game.Health
 {
-    public class Health : MonoBehaviour
+    public class HealthComponent : MonoBehaviour
     {
         [Header("Health Settings")]
         [SerializeField] private HealthSettings settings;
 
-        public int MaxHealth => settings.MaxHealth;
-        public int CurrentHealth { get; private set; }
+        public float MaxHealth => settings.MaxHealth;
+        public float CurrentHealth { get; private set; }
+        public bool IsDead => CurrentHealth <= 0;
 
-        public event Action<int, int> OnHealthChanged; // current, max
+        public event Action<float, float> OnHealthChanged; // current, max
         public event Action OnDeath;
-
-        private bool _isDead;
 
         private void Awake()
         {
             CurrentHealth = MaxHealth;
-            _isDead = false;
         }
 
-        public void TakeDamage(int amount)
+        public void TakeDamage(float amount)
         {
-            if (_isDead) return;
+            if (IsDead) return;
             if (amount <= 0) return;
 
             CurrentHealth -= amount;
@@ -35,14 +32,13 @@ namespace TowerDefence.Game
 
             if (CurrentHealth == 0)
             {
-                _isDead = true;
                 OnDeath?.Invoke();
             }
         }
 
-        public void Heal(int amount)
+        public void Heal(float amount)
         {
-            if (_isDead) return;
+            if (IsDead) return;
             if (amount <= 0) return;
 
             CurrentHealth += amount;
@@ -54,7 +50,6 @@ namespace TowerDefence.Game
         public void ResetHealth()
         {
             CurrentHealth = MaxHealth;
-            _isDead = false;
             OnHealthChanged?.Invoke(CurrentHealth, MaxHealth);
         }
     }
