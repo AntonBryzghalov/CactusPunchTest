@@ -11,7 +11,7 @@ namespace TowerDefence.Game.Controls
         
         private bool _isAttackButtonPressed;
 
-        public Vector2 MoveDirection { get; private set; }
+        public Vector2 MoveInput { get; private set; }
         public bool AttackPressed { get; private set; }
         public bool AttackReleased { get; private set; }
 
@@ -23,7 +23,7 @@ namespace TowerDefence.Game.Controls
 
         private void ReadMovementInput()
         {
-            MoveDirection = joystick.Direction.sqrMagnitude < deadZone * deadZone
+            MoveInput = joystick.Direction.sqrMagnitude < deadZone * deadZone
                 ? Vector2.zero
                 : joystick.Direction;
         }

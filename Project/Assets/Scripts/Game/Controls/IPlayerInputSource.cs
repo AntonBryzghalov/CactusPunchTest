@@ -4,7 +4,7 @@ namespace TowerDefence.Game.Controls
 {
     public interface IPlayerInputSource
     {
-        Vector2 MoveDirection { get; }
+        Vector2 MoveInput { get; }
         bool AttackPressed { get; }
         bool AttackReleased { get; }
     }

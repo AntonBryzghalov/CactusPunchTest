@@ -70,11 +70,9 @@ namespace TowerDefence.Game.Attack
 
                 targetPlayer.Health.TakeDamage(damage);
 
-                // Try push back
-                var targetRigidbody = collider.GetComponent<Rigidbody>();
-                if (targetRigidbody == null) continue;
+                // Push back
                 var appliedForce = Mathf.Lerp(0f, pushForce, powerFactor);
-                targetRigidbody.AddForce(hitRangeVector.normalized * appliedForce, ForceMode.Impulse);
+                targetPlayer.Movement.AddImpulse(hitRangeVector.normalized * appliedForce);
             }
         }
 
