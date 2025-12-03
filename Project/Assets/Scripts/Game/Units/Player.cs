@@ -1,3 +1,4 @@
+using TowerDefence.Core;
 using TowerDefence.Game.Attack;
 using TowerDefence.Game.Controls;
 using TowerDefence.Game.Health;
@@ -6,42 +7,30 @@ using TowerDefence.Game.Settings;
 using TowerDefence.Game.Teams;
 using TowerDefence.Game.Views;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace TowerDefence.Game.Units
 {
-    public class Player : MonoBehaviour
+    public class Player : MonoBehaviour, ITickable
     {
+        [SerializeField] private Transform rotationRoot;
         [SerializeField] private PlayerMovement movement;
         [SerializeField] private HealthComponent health;
         [SerializeField] private TeamComponent team;
         [SerializeField] private PlayerUiView uiView;
-        [SerializeField] private RaceSettings raceSettings;
-        [SerializeField] private AutomaticAttackTrigger attackTrigger;
-        [SerializeField] private BaseAttack attack;
 
         private IPlayerInputSource _inputSource;
+        private Weapon _weapon;
+        private GameObject _raceModel;
 
         public PlayerMovement Movement => movement;
         public HealthComponent Health => health;
         public TeamComponent Team => team;
         public RaceInfo Race { get; private set; }
 
-        public void SetInputSource(IPlayerInputSource inputSource)
-        {
-            _inputSource = inputSource;
-        }
-
-        private void Start()
-        {
-            Race = raceSettings.Races[Random.Range(0, raceSettings.Races.Length)];
-            uiView.Initialize(health, Race.Icon);
-        }
-
-        private void Update()
+        public void Tick(float deltaTime)
         {
             UpdateInput();
-            UpdateAttack();
+            _weapon?.AttackTrigger.Tick(deltaTime);
         }
 
         private void UpdateInput()
@@ -49,17 +38,34 @@ namespace TowerDefence.Game.Units
             if (_inputSource == null) return;
 
             movement.SetInput(_inputSource.MoveInput);
-            if (_inputSource.AttackPressed) attackTrigger.SetAttackMode(true);
-            if (_inputSource.AttackReleased) attackTrigger.SetAttackMode(false);
+            if (_inputSource.AttackPressed) _weapon.AttackTrigger.SetAttackMode(true);
+            if (_inputSource.AttackReleased) _weapon.AttackTrigger.SetAttackMode(false);
         }
 
-        private void UpdateAttack()
+#region Configuration
+
+        public void SetInputSource(IPlayerInputSource inputSource)
         {
-            if (attackTrigger.CanAttack)
-            {
-                attack.PerformAttack();
-                attackTrigger.OnAttackPerformed();
-            }
+            _inputSource = inputSource;
         }
+
+        public void SetRace(RaceInfo race)
+        {
+            if (_raceModel != null) Destroy(_raceModel);
+
+            Race = race;
+            _raceModel = Instantiate(race.Prefab, rotationRoot, false);
+            movement.Initialize(_raceModel.transform);
+            uiView.Initialize(health, Race.Icon);
+        }
+
+        public void SetWeapon(Weapon weapon)
+        {
+            _weapon = weapon;
+            _weapon.SetOwner(this);
+            _weapon.AttackTransform?.SetParent(rotationRoot, false);
+        }
+
+#endregion
     }
 }
