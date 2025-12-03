@@ -1,3 +1,4 @@
+using TowerDefence.Game.Rules.ConversionClash;
 using UnityEngine;
 
 namespace TowerDefence.Game.Teams
@@ -11,18 +12,13 @@ namespace TowerDefence.Game.Teams
         private MaterialPropertyBlock[] _propertyBlocks;
 
         public int TeamIndex { get; private set; } = -1;
-        public TeamInfo Team => teamSettings.Teams[TeamIndex];
+        public TeamInfo Team { get; private set; }
 
-        public void SetTeamIndex(int index)
+        public void SetTeam(ITeamRegistry teamRegistry, int teamIndex)
         {
-            return;
-            if (index < 0 || index >= teamSettings.Teams.Length)
-            {
-                Debug.LogError($"Invalid team index: {index}");
-                return;
-            }
+            Team = teamRegistry.GetTeam(teamIndex);
+            TeamIndex = teamIndex;
 
-            TeamIndex = index;
             ApplyTeamColor();
 
             var teamAwareComponents = GetComponentsInChildren<ITeamAware>();
@@ -36,7 +32,7 @@ namespace TowerDefence.Game.Teams
         {
             if (_propertyBlocks == null)
             {
-                Initialize();
+                InitializeColorProperties();
             }
 
             var color = Team.Color;
@@ -47,7 +43,7 @@ namespace TowerDefence.Game.Teams
             }
         }
 
-        private void Initialize()
+        private void InitializeColorProperties()
         {
             _colorPropertyId = Shader.PropertyToID("_BaseColor");
             _propertyBlocks = new MaterialPropertyBlock[renderers.Length];
