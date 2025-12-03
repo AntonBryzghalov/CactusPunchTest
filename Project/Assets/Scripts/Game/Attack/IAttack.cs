@@ -1,6 +1,8 @@
+using TowerDefence.Game.Units;
+
 namespace TowerDefence.Game.Attack
 {
-    public interface IAttack
+    public interface IAttack : IOwnerPlayer
     {
         void PerformAttack();
     }

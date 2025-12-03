@@ -1,9 +1,10 @@
+using TowerDefence.Core;
+
 namespace TowerDefence.Game.Attack
 {
-    public interface IAttackTrigger
+    public interface IAttackTrigger : ITickable
     {
-        bool CanAttack { get; }
+        void SetAttack(IAttack attack);
         void SetAttackMode(bool on);
-        void OnAttackPerformed();
     }
 }

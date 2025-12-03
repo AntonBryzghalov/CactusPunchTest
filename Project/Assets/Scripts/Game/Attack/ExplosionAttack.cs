@@ -1,8 +1,9 @@
-using TowerDefence.Game.Units;
+using TowerDefence.Game.Health;
 using UnityEngine;
 
 namespace TowerDefence.Game.Attack
 {
+    // TODO: think of refactoring to 2 entities: attack and damage dealer
     public class ExplosionAttack : BaseAttack
     {
         [Header("Targeting")]
@@ -49,13 +50,13 @@ namespace TowerDefence.Game.Attack
             for (int i = 0; i < hitCount; i++)
             {
                 var collider = _hitColliders[i];
-                var targetPlayer = collider.GetComponent<Player>();
-                if (targetPlayer == null || targetPlayer.Health.IsDead)
+                var targetHealth = collider.GetComponent<HealthComponent>();
+                
+                if (targetHealth == null || targetHealth.IsDead)
                     continue;
 
                 // Team check
-                var targetTeam = targetPlayer.Team;
-                if (targetTeam != null && IsInSameTeam(targetTeam.TeamIndex))
+                if (IsInSameTeam(targetHealth.Owner.Team.TeamIndex))
                 {
                     continue;
                 }
@@ -68,11 +69,13 @@ namespace TowerDefence.Game.Attack
                 var powerFactor = actualHitRange / radius;
                 var damage = Mathf.Lerp(damageMax, damageMin, powerFactor);
 
-                targetPlayer.Health.TakeDamage(damage);
-
-                // Push back
-                var appliedForce = Mathf.Lerp(0f, pushForce, powerFactor);
-                targetPlayer.Movement.AddImpulse(hitRangeVector.normalized * appliedForce);
+                targetHealth.TakeDamage(damage, Owner);
+                if (!targetHealth.IsDead)
+                {
+                    // Push back
+                    var appliedForce = Mathf.Lerp(0f, pushForce, powerFactor);
+                    targetHealth.Owner.Movement.AddImpulse(hitRangeVector.normalized * appliedForce);
+                }
             }
         }
 
