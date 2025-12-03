@@ -13,11 +13,15 @@ MonoBehaviour:
   m_Name: RaceSettings
   m_EditorClassIdentifier: Assembly-CSharp::TowerDefence.Game.Settings.RaceSettings
   races:
-  - name: Human
-    icon: {fileID: 434074870, guid: dec74a3928eafdf4ebb50bab52524882, type: 3}
-  - name: Goblin
-    icon: {fileID: 197622386, guid: dec74a3928eafdf4ebb50bab52524882, type: 3}
-  - name: Elf
-    icon: {fileID: 677724710, guid: dec74a3928eafdf4ebb50bab52524882, type: 3}
-  - name: Robot
-    icon: {fileID: -313086396, guid: dec74a3928eafdf4ebb50bab52524882, type: 3}
+  - name: Fire
+    icon: {fileID: 731138677, guid: dec74a3928eafdf4ebb50bab52524882, type: 3}
+    prefab: {fileID: 2712979422053495451, guid: f0c094605e45e04438b5ac4505334716, type: 3}
+  - name: Ice
+    icon: {fileID: -1041018859, guid: dec74a3928eafdf4ebb50bab52524882, type: 3}
+    prefab: {fileID: 3530422614275779100, guid: 4b7942f68dc41fe42bb33b671d8c2c2a, type: 3}
+  - name: Nature
+    icon: {fileID: 1822556356, guid: dec74a3928eafdf4ebb50bab52524882, type: 3}
+    prefab: {fileID: 1058939499873676640, guid: f7ad1717838d9c94c9158416c692e18d, type: 3}
+  - name: Rock
+    icon: {fileID: 100991660, guid: dec74a3928eafdf4ebb50bab52524882, type: 3}
+    prefab: {fileID: 1685328449031317867, guid: df94ea895965d2b4c8bd540bfd17b345, type: 3}
