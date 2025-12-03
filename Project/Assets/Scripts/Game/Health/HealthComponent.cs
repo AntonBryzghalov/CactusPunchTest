@@ -1,26 +1,35 @@
 using System;
+using TowerDefence.Core;
+using TowerDefence.Game.Events;
+using TowerDefence.Game.Units;
 using UnityEngine;
 
 namespace TowerDefence.Game.Health
 {
-    public class HealthComponent : MonoBehaviour
+    public class HealthComponent : MonoBehaviour, IOwnerPlayer
     {
         [Header("Health Settings")]
         [SerializeField] private HealthSettings settings;
 
+        private IEventBus _eventBus;
+
         public float MaxHealth => settings.MaxHealth;
         public float CurrentHealth { get; private set; }
         public bool IsDead => CurrentHealth <= 0;
+        public Player Owner { get; private set; }
+        private IEventBus EventBus => _eventBus ??= Services.Get<IEventBus>();
+
 
         public event Action<float, float> OnHealthChanged; // current, max
-        public event Action OnDeath;
 
         private void Awake()
         {
             CurrentHealth = MaxHealth;
         }
 
-        public void TakeDamage(float amount)
+        public void SetOwner(Player player) => Owner = player;
+
+        public void TakeDamage(float amount, Player attacker)
         {
             if (IsDead) return;
             if (amount <= 0) return;
@@ -32,7 +41,7 @@ namespace TowerDefence.Game.Health
 
             if (CurrentHealth == 0)
             {
-                OnDeath?.Invoke();
+                EventBus.Publish(new PlayerKilledEvent { Attacker = attacker, Victim = Owner });
             }
         }
 

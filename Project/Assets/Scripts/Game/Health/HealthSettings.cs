@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace TowerDefence.Game.Health
 {
-    [CreateAssetMenu(fileName = "HealthSettings", menuName = "My Awesome Game/HealthSettings")]
+    [CreateAssetMenu(fileName = "HealthSettings", menuName = "My Awesome Game/Health Settings")]
     public class HealthSettings : ScriptableObject
     {
         [SerializeField] private float maxHealth = 100;

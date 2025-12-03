@@ -5,16 +5,17 @@ namespace TowerDefence.Game.Movement
     public class PlayerMovement : MonoBehaviour
     {
         [SerializeField] private Rigidbody rigidBody;
-        [SerializeField] private Transform viewTransform;
         [SerializeField] private float movementSpeed;
         [SerializeField] private float rotationSpeed;
         [SerializeField, Min(0.01f)] private float impulseDragFactor = 1f;
 
+        private Transform _viewTransform;
         private Vector3 _moveInput;
         private Vector3 _impulse;
 
-        private void Awake()
+        public void Initialize(Transform viewTransform)
         {
+            _viewTransform = viewTransform;
             if (rigidBody == null) rigidBody = GetComponent<Rigidbody>();
         }
 
@@ -26,6 +27,18 @@ namespace TowerDefence.Game.Movement
         public void AddImpulse(Vector3 impulse)
         {
             _impulse += impulse;
+        }
+
+        public void TeleportTo(Vector3 position)
+        {
+            _impulse = Vector3.zero;
+            rigidBody.position = position;
+        }
+
+        public void SetRotation(Quaternion rotation)
+        {
+            _viewTransform.rotation = rotation;
+            _moveInput = rotation * Vector3.forward;
         }
 
         private void FixedUpdate()
@@ -44,8 +57,8 @@ namespace TowerDefence.Game.Movement
         {
             if (Mathf.Approximately(_moveInput.sqrMagnitude, 0f)) return;
 
-            viewTransform.localRotation =
-                Quaternion.Slerp(viewTransform.localRotation, Quaternion.LookRotation(_moveInput), rotationSpeed * Time.deltaTime);
+            _viewTransform.localRotation =
+                Quaternion.Slerp(_viewTransform.localRotation, Quaternion.LookRotation(_moveInput), rotationSpeed * Time.deltaTime);
         }
     }
 }
