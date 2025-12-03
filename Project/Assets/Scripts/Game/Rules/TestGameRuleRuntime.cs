@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace TowerDefence.Game.Rules
 {
-    public class TestGameRule : MonoBehaviour
+    public class TestGameRuleRuntime : MonoBehaviour
     {
         [SerializeField] private TeamSettings teamSettings;
         [SerializeField] private Player player;
@@ -14,7 +14,7 @@ namespace TowerDefence.Game.Rules
         private void Start()
         {
             player.SetInputSource(uiControls);
-            player.Team.SetTeamIndex(Random.Range(0, teamSettings.Teams.Length));
+            player.Team.SetTeam(teamSettings, Random.Range(0, teamSettings.Teams.Length));
         }
     }
 }
