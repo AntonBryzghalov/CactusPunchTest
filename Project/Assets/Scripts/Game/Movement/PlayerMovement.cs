@@ -32,13 +32,13 @@ namespace TowerDefence.Game.Movement
         public void TeleportTo(Vector3 position)
         {
             _impulse = Vector3.zero;
-            rigidBody.position = position;
+            rigidBody.MovePosition(position);
+            rigidBody.linearVelocity = Vector3.zero;
         }
 
         public void SetRotation(Quaternion rotation)
         {
             _viewTransform.rotation = rotation;
-            _moveInput = rotation * Vector3.forward;
         }
 
         private void FixedUpdate()

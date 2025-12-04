@@ -27,6 +27,19 @@ namespace TowerDefence.Game.Units
         public TeamComponent Team => team;
         public RaceInfo Race { get; private set; }
 
+        private void Awake()
+        {
+            team.OnTeamChanged += OnTeamChanged;
+            health.ResetHealth();
+            health.SetOwner(this);
+            uiView.BindHealthComponent(health);
+        }
+
+        private void OnDestroy()
+        {
+            team.OnTeamChanged -= OnTeamChanged;
+        }
+
         public void Tick(float deltaTime)
         {
             UpdateInput();
@@ -42,6 +55,11 @@ namespace TowerDefence.Game.Units
             if (_inputSource.AttackReleased) _weapon.AttackTrigger.SetAttackMode(false);
         }
 
+        private void OnTeamChanged(TeamInfo teamInfo)
+        {
+            uiView.SetTeamColor(teamInfo.Color);
+        }
+
 #region Configuration
 
         public void SetInputSource(IPlayerInputSource inputSource)
@@ -51,19 +69,17 @@ namespace TowerDefence.Game.Units
 
         public void SetRace(RaceInfo race)
         {
-            if (_raceModel != null) Destroy(_raceModel);
-
             Race = race;
             _raceModel = Instantiate(race.Prefab, rotationRoot, false);
             movement.Initialize(_raceModel.transform);
-            uiView.Initialize(health, Race.Icon);
+            uiView.SetRaceSprite(Race.Icon);
         }
 
         public void SetWeapon(Weapon weapon)
         {
             _weapon = weapon;
             _weapon.SetOwner(this);
-            _weapon.AttackTransform?.SetParent(rotationRoot, false);
+            _weapon.transform.SetParent(_raceModel.transform, false);
         }
 
 #endregion

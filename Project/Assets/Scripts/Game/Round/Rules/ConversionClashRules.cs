@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TowerDefence.Core;
@@ -7,6 +5,8 @@ using TowerDefence.Game.AI;
 using TowerDefence.Game.Attack;
 using TowerDefence.Game.Controls;
 using TowerDefence.Game.Events;
+using TowerDefence.Game.Round.States;
+using TowerDefence.Game.Rules.ConversionClash;
 using TowerDefence.Game.Settings;
 using TowerDefence.Game.Spawning;
 using TowerDefence.Game.Teams;
@@ -15,7 +15,7 @@ using Unity.Cinemachine;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace TowerDefence.Game.Rules.ConversionClash
+namespace TowerDefence.Game.Round.Rules
 {
     public class ConversionClashRules : MonoBehaviour, ITeamRegistry
     {
@@ -31,6 +31,7 @@ namespace TowerDefence.Game.Rules.ConversionClash
 
         [Header("Rules")]
         [SerializeField, Min(1)] private int maxPlayers = 4;
+        [SerializeField, Min(0f)] private float warmupDuration = 1f; // TODO: replace with countdown popup
         [SerializeField] private float respawnDelay = 1f;
 
         private readonly List<Player> _players = new List<Player>();
@@ -38,21 +39,28 @@ namespace TowerDefence.Game.Rules.ConversionClash
 
         private readonly StateMachine _stateMachine = new StateMachine();
         private IState _warmupState;
+        private IState _matchState;
 
-        private IEventBus _eventBus;
-        private IEventToken _playerKilledToken;
+        private ITickDispatcher _tickDispatcher;
+        //private IEventBus _eventBus;
 
+        public IReadOnlyList<Player> Players => _players;
+        public Player RealPlayer => _players[0];
         private PlayerBuilder PlayerBuilder => _playerBuilder ??= new PlayerBuilder(playerPrefab);
-        private IEventBus EventBus => _eventBus ??= Services.Get<IEventBus>();
+        //private IEventBus EventBus => _eventBus ??= Services.Get<IEventBus>();
 
         private void Start()
         {
-            _playerKilledToken = EventBus.Subscribe<PlayerKilledEvent>(OnPlayerKilled);
+            _tickDispatcher = Services.Get<ITickDispatcher>();
+            _warmupState = new WarmupState(this, warmupDuration);
+            _matchState = new ConversionMatchState(this, teamSettings, respawnDelay);
+            _stateMachine.SetState(_warmupState);
+            _tickDispatcher.Subscribe(_stateMachine.Tick);
         }
 
         private void OnDestroy()
         {
-            EventBus.Unsubscribe(_playerKilledToken);
+            _tickDispatcher.Unsubscribe(_stateMachine.Tick);
         }
 
         TeamInfo ITeamRegistry.GetTeam(int index) => teamSettings.Teams[index];
@@ -65,6 +73,15 @@ namespace TowerDefence.Game.Rules.ConversionClash
                 IPlayerInputSource inputSource = i == 0 ? uiControls : new SimpleBot();
                 SpawnPlayer(teamIndex, inputSource);
             }
+        }
+
+        public void SetCameraTarget(Transform target)
+        {
+            cinemachineCamera.Target = new CameraTarget
+            {
+                TrackingTarget = target,
+                LookAtTarget = target
+            };
         }
 
         private void SpawnPlayer(int teamIndex, IPlayerInputSource inputSource)
@@ -96,9 +113,9 @@ namespace TowerDefence.Game.Rules.ConversionClash
             _players.Clear();
         }
 
-        public IState CreateMatchState()
+        public void SetMatchState()
         {
-            throw new NotImplementedException("TODO: implement CreateMatchState");
+            _stateMachine.SetState(_matchState);
         }
 
         private Transform GetSpawnPoint(int teamIndex)
@@ -108,21 +125,6 @@ namespace TowerDefence.Game.Rules.ConversionClash
                 .ToArray();
 
             return filtered[Random.Range(0, filtered.Length)].transform;
-        }
-
-        private void OnPlayerKilled(PlayerKilledEvent evt)
-        {
-            var newTeamIndex = evt.Attacker.Team.TeamIndex;
-            StartCoroutine(Respawn(evt.Victim, newTeamIndex));
-        }
-
-        private IEnumerator Respawn(Player victim, int teamIndex)
-        {
-            if (respawnDelay > 0f)
-                yield return new WaitForSeconds(respawnDelay);
-
-            victim.Health.ResetHealth();
-            victim.Team.SetTeam(teamSettings, teamIndex);
         }
     }
 }

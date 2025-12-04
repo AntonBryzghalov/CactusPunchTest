@@ -1514,7 +1514,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1554646295}
-  - component: {fileID: 1554646294}
   - component: {fileID: 1554646296}
   m_Layer: 0
   m_Name: GameRules
@@ -1523,21 +1522,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1554646294
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1554646293}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79b06a619fc843e48bacf53a919e247a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TowerDefence.Game.Rules.TestGameRule
-  teamSettings: {fileID: 11400000, guid: e5dfd1fcc54c7984a8435db7641e9d8b, type: 2}
-  player: {fileID: 609533104836213543, guid: ad77caf157811c745b527a093d56b2cb, type: 3}
-  uiControls: {fileID: 440072174}
 --- !u!4 &1554646295
 Transform:
   m_ObjectHideFlags: 0
@@ -1565,8 +1549,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a95a685368c8994993dc13aa29f3754, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TowerDefence.Game.Rules.ConversionClash.ConversionClashRuntime
-  cinemachineCamera: {fileID: 0}
-  uiControls: {fileID: 0}
+  cinemachineCamera: {fileID: 1453151583}
+  uiControls: {fileID: 440072174}
   spawnPoints:
   - {fileID: 1168598852}
   - {fileID: 2013953218}
@@ -1578,7 +1562,7 @@ MonoBehaviour:
   - {fileID: 527551942}
   teamSettings: {fileID: 11400000, guid: e5dfd1fcc54c7984a8435db7641e9d8b, type: 2}
   raceSettings: {fileID: 11400000, guid: 88baf42489b8107408f632294637cd71, type: 2}
-  weaponSettings: {fileID: 0}
+  weaponSettings: {fileID: 11400000, guid: 34a0bac55faca2c4c80f05efebb69fbe, type: 2}
   playerPrefab: {fileID: 609533104836213543, guid: ad77caf157811c745b527a093d56b2cb, type: 3}
   maxPlayers: 8
   respawnDelay: 0

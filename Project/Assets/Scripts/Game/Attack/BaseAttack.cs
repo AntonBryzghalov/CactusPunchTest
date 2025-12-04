@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace TowerDefence.Game.Attack
 {
-    public abstract class BaseAttack : MonoBehaviour, IAttack, ITeamAware, IOwnerPlayer
+    public abstract class BaseAttack : MonoBehaviour, IAttack, ITeamAware
     {
         private int _friendlyTeamIndex = -1;
 

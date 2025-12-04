@@ -3,7 +3,7 @@ using TowerDefence.Game.Teams;
 using TowerDefence.Game.Units;
 using UnityEngine;
 
-namespace TowerDefence.Game.Rules
+namespace TowerDefence.Game.Round.Rules
 {
     public class TestGameRuleRuntime : MonoBehaviour
     {

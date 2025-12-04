@@ -24,7 +24,7 @@ namespace TowerDefence.Game.Health
 
         private void Awake()
         {
-            CurrentHealth = MaxHealth;
+            ResetHealth();
         }
 
         public void SetOwner(Player player) => Owner = player;
@@ -34,10 +34,7 @@ namespace TowerDefence.Game.Health
             if (IsDead) return;
             if (amount <= 0) return;
 
-            CurrentHealth -= amount;
-            CurrentHealth = Mathf.Clamp(CurrentHealth, 0, MaxHealth);
-
-            OnHealthChanged?.Invoke(CurrentHealth, MaxHealth);
+            SetCurrentHealth(CurrentHealth - amount);
 
             if (CurrentHealth == 0)
             {
@@ -50,15 +47,17 @@ namespace TowerDefence.Game.Health
             if (IsDead) return;
             if (amount <= 0) return;
 
-            CurrentHealth += amount;
-            CurrentHealth = Mathf.Clamp(CurrentHealth, 0, MaxHealth);
-
-            OnHealthChanged?.Invoke(CurrentHealth, MaxHealth);
+            SetCurrentHealth(CurrentHealth + amount);
         }
 
         public void ResetHealth()
         {
-            CurrentHealth = MaxHealth;
+            SetCurrentHealth(MaxHealth);
+        }
+
+        private void SetCurrentHealth(float amount)
+        {
+            CurrentHealth = Mathf.Clamp(amount, 0, MaxHealth);
             OnHealthChanged?.Invoke(CurrentHealth, MaxHealth);
         }
     }
