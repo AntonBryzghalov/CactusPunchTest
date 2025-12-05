@@ -6,6 +6,7 @@ namespace TowerDefence.Game.Controls
     {
         Vector2 MoveInput { get; }
         bool AttackPressed { get; }
-        bool AttackReleased { get; }
+        void EnableInput();
+        void DisableInput();
     }
 }

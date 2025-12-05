@@ -41,22 +41,23 @@ namespace TowerDefence.UI
             if (_screens.TryGetValue(screenId, out var foundScreen))
             {
                 screen = foundScreen as T;
-                return screen != null;
+                var result = screen != null;
+                if (!result)
+                {
+                    Debug.LogError($"Screen '{screenId}' is not of type {typeof(T).Name}");
+                }
+                return result;
             }
 
+            Debug.LogError($"Screen '{screenId}' is not found");
             screen = null;
             return false;
         }
 
         public T GetScreen<T>(string screenId) where T : class, IScreen
         {
-            if (TryGetScreen<T>(screenId, out var screen))
-            {
-                return screen;
-            }
-
-            Debug.LogError($"Screen '{screenId}' not found or is not of type {typeof(T).Name}");
-            return null;
+            TryGetScreen<T>(screenId, out var screen);
+            return screen;
         }
 
         public void Clear()

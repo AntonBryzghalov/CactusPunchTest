@@ -1,4 +1,3 @@
-using Cysharp.Threading.Tasks;
 using TowerDefence.Core;
 using TowerDefence.Game.Events;
 using TowerDefence.Game.Round.Rules;
@@ -10,29 +9,33 @@ namespace TowerDefence.Game.Round.States
 {
     public class ConversionMatchState : IState
     {
-        private readonly ConversionClashRules _rules;
+        private readonly IRoundManager _roundManager;
         private readonly ITeamRegistry _teamRegistry;
-        private readonly float _respawnDelay;
         private readonly IEventBus _eventBus;
         private IEventToken _playerKilledToken;
 
-        public ConversionMatchState(ConversionClashRules rules, ITeamRegistry teamRegistry, float respawnDelay)
+        public ConversionMatchState(IRoundManager roundManager, ITeamRegistry teamRegistry)
         {
-            _rules = rules;
+            _roundManager = roundManager;
             _teamRegistry = teamRegistry;
-            _respawnDelay = respawnDelay;
             _eventBus = Services.Get<IEventBus>();
         }
 
         public void OnEnter()
         {
-            _eventBus.Subscribe<PlayerKilledEvent>(OnPlayerKilled);
+            foreach (var player in _roundManager.Players)
+            {
+                player.SetGameplayState();
+            }
+
+            _playerKilledToken = _eventBus.Subscribe<PlayerKilledEvent>(OnPlayerKilled);
             Debug.Log("Conversion Match started!");
         }
 
         public void Tick(float deltaTime)
         {
-            foreach (var player in _rules.Players)
+            // TODO: move to player state (subscribe for update ticks)
+            foreach (var player in _roundManager.Players)
             {
                 player.Tick(deltaTime);
             }
@@ -47,23 +50,36 @@ namespace TowerDefence.Game.Round.States
         private void OnPlayerKilled(PlayerKilledEvent evt)
         {
             var newTeamIndex = evt.Attacker.Team.TeamIndex;
-            CheckForGameOver();
-            Respawn(evt.Victim, newTeamIndex).Forget();
+            Respawn(evt.Victim, newTeamIndex);
+            CheckForGameOver(evt.Attacker);
         }
 
-        private void CheckForGameOver()
+        private void CheckForGameOver(Player attacker)
         {
-            // TODO: implement
-            var isGameOver = false;
-            if (isGameOver)
-                _rules.SetMatchState();
+            var firstTeamIndex = _roundManager.Players[0].Team.TeamIndex;
+            var allPlayersOfTheSameTeam = true;
+            for (int i = 1; i < _roundManager.Players.Count; i++)
+            {
+                if (_roundManager.Players[i].Team.TeamIndex != firstTeamIndex)
+                {
+                    allPlayersOfTheSameTeam = false;
+                    break;
+                }
+            }
+
+            if (!allPlayersOfTheSameTeam)
+                return;
+
+            if (attacker == _roundManager.RealPlayer)
+                _roundManager.SetWinState();
+            else
+            {
+                _roundManager.SetLoseState();
+            }
         }
 
-        private async UniTask Respawn(Player victim, int teamIndex)
+        private void Respawn(Player victim, int teamIndex)
         {
-            if (_respawnDelay > 0f)
-                await UniTask.WaitForSeconds(_respawnDelay);
-
             victim.Health.ResetHealth();
             victim.Team.SetTeam(_teamRegistry, teamIndex);
         }

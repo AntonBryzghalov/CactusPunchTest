@@ -73,7 +73,7 @@ namespace TowerDefence.Game.Attack
                 if (!targetHealth.IsDead)
                 {
                     // Push back
-                    var appliedForce = Mathf.Lerp(0f, pushForce, powerFactor);
+                    var appliedForce = Mathf.Lerp(pushForce, 0f, powerFactor);
                     targetHealth.Owner.Movement.AddImpulse(hitRangeVector.normalized * appliedForce);
                 }
             }

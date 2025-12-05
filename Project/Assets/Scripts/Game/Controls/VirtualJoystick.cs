@@ -50,6 +50,11 @@ namespace TowerDefence.Game.Controls
 
         public void OnPointerUp(PointerEventData eventData)
         {
+            Reset();
+        }
+
+        public void Reset()
+        {
             Direction = Vector2.zero;
             handle.anchoredPosition = Vector2.zero;
         }

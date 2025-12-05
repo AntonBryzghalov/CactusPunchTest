@@ -8,15 +8,33 @@ namespace TowerDefence.Game.Controls
         [SerializeField] private VirtualButton attackButton;
         [Range(0f, 1f)]
         [SerializeField] private float deadZone = 0.1f;
-        
-        private bool _isAttackButtonPressed;
+
+        private bool _inputEnabled = true;
 
         public Vector2 MoveInput { get; private set; }
         public bool AttackPressed { get; private set; }
-        public bool AttackReleased { get; private set; }
+
+        public void EnableInput()
+        {
+            gameObject.SetActive(true);
+            _inputEnabled = true;
+        }
+
+        public void DisableInput()
+        {
+            _inputEnabled = false;
+            joystick.Reset();
+            attackButton.Reset();
+            gameObject.SetActive(false);
+        }
 
         private void Update()
         {
+            if (!_inputEnabled)
+            {
+                return;
+            }
+
             ReadMovementInput();
             ReadAttackInput();
         }
@@ -30,22 +48,7 @@ namespace TowerDefence.Game.Controls
 
         private void ReadAttackInput()
         {
-            AttackPressed = false;
-            AttackReleased = false;
-
-            if (_isAttackButtonPressed)
-            {
-                if (!attackButton.IsPressed)
-                {
-                    AttackReleased = true;
-                    _isAttackButtonPressed = false;
-                }
-            }
-            else if (attackButton.IsPressed)
-            {
-                AttackPressed = true;
-                _isAttackButtonPressed = true;
-            }
+            AttackPressed = attackButton.IsPressed;
         }
     }
 }

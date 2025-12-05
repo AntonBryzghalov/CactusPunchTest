@@ -6,5 +6,9 @@ namespace TowerDefence.Game.Attack
     {
         void SetAttack(IAttack attack);
         void SetAttackMode(bool on);
+        /// <summary>
+        /// Used to cancel ongoing attack and return to default state
+        /// </summary>
+        void Reset();
     }
 }

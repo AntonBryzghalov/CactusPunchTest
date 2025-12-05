@@ -525,7 +525,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TowerDefence.UI.MainMenuScreen
   _screenId: MainMenu
-  _canvasGroup: {fileID: 1351394664}
+  hideOnStart: 0
   _playButton: {fileID: 1989884508}
 --- !u!225 &1351394664
 CanvasGroup:

@@ -34,6 +34,11 @@ namespace TowerDefence.Game.Controls
 
         public void OnPointerUp(PointerEventData eventData)
         {
+            Reset();
+        }
+
+        public void Reset()
+        {
             IsPressed = false;
             image.color = _originalColor;
         }

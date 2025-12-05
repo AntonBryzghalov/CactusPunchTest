@@ -1,4 +1,5 @@
 using TowerDefence.Core;
+using TowerDefence.Game.Round.Rules;
 using TowerDefence.Systems;
 using TowerDefence.UI;
 using UnityEngine;
@@ -32,6 +33,15 @@ namespace TowerDefence.Game
             else
             {
                 Debug.LogWarning("GameplayHUD not found. Make sure it exists in Gameplay scene with ScreenId='GameplayHUD'");
+            }
+
+            if (Services.TryGet<IRoundManager>(out var roundManager))
+            {
+                roundManager.SetWarmupState();
+            }
+            else
+            {
+                Debug.LogError("RoundManager not found. Make sure it exists in the Gameplay scene");
             }
         }
 
@@ -72,7 +82,7 @@ namespace TowerDefence.Game
             await screenRouter.HideModalAsync();
         }
 
-        private async void OnGameOver(GameOverEvent evt){}
+        private void OnGameOver(GameOverEvent evt){}
 
         private async void OnReturnToMenu(ReturnToMenuRequestedEvent evt)
         {

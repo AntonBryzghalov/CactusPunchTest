@@ -117,6 +117,16 @@ namespace TowerDefence.UI
 
         public void Clear()
         {
+            if (_screenStack.Count > 0)
+            {
+                _screenStack.Pop().HideAsync(CancellationToken.None);
+            }
+
+            if (_modalStack.Count > 0)
+            {
+                _modalStack.Pop().HideAsync(CancellationToken.None);
+            }
+
             _screenStack.Clear();
             _modalStack.Clear();
             _activeScreenIds.Clear();

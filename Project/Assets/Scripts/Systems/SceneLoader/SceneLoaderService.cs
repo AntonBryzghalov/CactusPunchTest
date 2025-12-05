@@ -79,6 +79,11 @@ namespace TowerDefence.Systems
                     await Task.Yield();
                 }
 
+                if (mode == LoadSceneMode.Single)
+                {
+                    _loadedScenes.Clear();
+                }
+
                 _loadedScenes.Add(sceneName);
                 Debug.Log($"Scene loaded: {sceneName}");
             }

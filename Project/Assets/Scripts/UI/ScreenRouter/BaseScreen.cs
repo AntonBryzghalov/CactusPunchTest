@@ -14,7 +14,8 @@ namespace TowerDefence.UI
     public abstract class BaseScreen : MonoBehaviour, IScreen
     {
         [SerializeField] private string _screenId;
-        
+        [SerializeField] private bool hideOnStart = true;
+
         private CanvasGroup _canvasGroup;
         private Tween _fadeTween;
 
@@ -24,12 +25,15 @@ namespace TowerDefence.UI
         {
             _canvasGroup = GetComponent<CanvasGroup>();
             RegisterSelf();
+            if (hideOnStart)
+            {
+                gameObject.SetActive(false);
+            }
         }
 
         protected virtual void OnDestroy()
         {
-            _fadeTween?.Kill();
-            
+            _fadeTween.Kill();
             UnregisterSelf();
         }
 
@@ -49,10 +53,9 @@ namespace TowerDefence.UI
 
         public virtual async Task ShowAsync(CancellationToken cancellationToken = default)
         {
-
             gameObject.SetActive(true);
 
-            _fadeTween?.Kill();
+            _fadeTween.Kill();
 
             _canvasGroup.alpha = 0f;
             _canvasGroup.interactable = false;
@@ -61,6 +64,7 @@ namespace TowerDefence.UI
             OnShow();
 
             _fadeTween = _canvasGroup.DOFade(1f, 0.3f)
+                .SetUpdate(true)
                 .OnComplete(() =>
                 {
                     _canvasGroup.interactable = true;
@@ -72,7 +76,7 @@ namespace TowerDefence.UI
 
         public virtual async Task HideAsync(CancellationToken cancellationToken = default)
         {
-            _fadeTween?.Kill();
+            _fadeTween.Kill();
 
             _canvasGroup.interactable = false;
             _canvasGroup.blocksRaycasts = false;
@@ -80,6 +84,7 @@ namespace TowerDefence.UI
             OnHide();
 
             _fadeTween = _canvasGroup.DOFade(0f, 0.3f)
+                .SetUpdate(true)
                 .OnComplete(() => gameObject.SetActive(false));
 
             await _fadeTween.AsyncWaitForCompletion();

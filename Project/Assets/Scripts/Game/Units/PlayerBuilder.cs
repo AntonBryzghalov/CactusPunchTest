@@ -81,7 +81,11 @@ namespace TowerDefence.Game.Units
             if (_player == null) CreateNewPlayer();
 
             _player.SetRace(_race);
-            if (_inputSource != null) _player.SetInputSource(_inputSource);
+            if (_inputSource != null)
+            {
+                _player.SetInputSource(_inputSource);
+            }
+
             if (_weapon != null) _player.SetWeapon(_weapon);
             if (_teamIndex >= 0) _player.Team.SetTeam(_teamRegistry, _teamIndex);
             _player.Movement.TeleportTo(_position);

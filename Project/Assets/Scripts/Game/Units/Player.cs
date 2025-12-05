@@ -51,8 +51,7 @@ namespace TowerDefence.Game.Units
             if (_inputSource == null) return;
 
             movement.SetInput(_inputSource.MoveInput);
-            if (_inputSource.AttackPressed) _weapon.AttackTrigger.SetAttackMode(true);
-            if (_inputSource.AttackReleased) _weapon.AttackTrigger.SetAttackMode(false);
+            _weapon.AttackTrigger.SetAttackMode(_inputSource.AttackPressed);
         }
 
         private void OnTeamChanged(TeamInfo teamInfo)
@@ -83,5 +82,29 @@ namespace TowerDefence.Game.Units
         }
 
 #endregion
+
+        public void SetWinState()
+        {
+            _inputSource.DisableInput();
+            _weapon.AttackTrigger.Reset();
+            // TODO: Add some "win" animation
+        }
+
+        public void SetLoseState()
+        {
+            _inputSource.DisableInput();
+            _weapon.AttackTrigger.Reset();
+            // TODO: Add some "lose" animation
+        }
+
+        public void SetPrepareState()
+        {
+            _inputSource.DisableInput();
+        }
+
+        public void SetGameplayState()
+        {
+            _inputSource.EnableInput();
+        }
     }
 }

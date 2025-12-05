@@ -19,6 +19,12 @@ namespace TowerDefence.Game.Attack
 
         public void SetAttackMode(bool on) => _isActive = on;
 
+        public void Reset()
+        {
+            _isActive = false;
+            _nextAttackTime = 0f;
+        }
+
         public void Tick(float _)
         {
             if (!CanAttack) return;
