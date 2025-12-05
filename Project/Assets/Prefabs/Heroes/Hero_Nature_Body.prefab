@@ -35,33 +35,5 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7a318391d7273754c8106514a8f88bb8, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: -2652348561625893099}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7a318391d7273754c8106514a8f88bb8, type: 3}
---- !u!1 &1058939499873676640 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 7a318391d7273754c8106514a8f88bb8, type: 3}
-  m_PrefabInstance: {fileID: 176610209426608177}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &-2652348561625893099
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1058939499873676640}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb3a9f43b81ec124fb7444deada2d8f8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TowerDefence.Helpers.MeshColorSetter
-  colorizationInfos:
-  - renderer: {fileID: 8497070390184721154}
-    colorPropertyName: _BaseColor
---- !u!137 &8497070390184721154 stripped
-SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: -605493852317963469, guid: 7a318391d7273754c8106514a8f88bb8, type: 3}
-  m_PrefabInstance: {fileID: 176610209426608177}
-  m_PrefabAsset: {fileID: 0}
