@@ -1,3 +1,4 @@
+using System;
 using TowerDefence.Core;
 using TowerDefence.Game.Attack;
 using TowerDefence.Game.Controls;
@@ -10,7 +11,8 @@ using UnityEngine;
 
 namespace TowerDefence.Game.Units
 {
-    public class Player : MonoBehaviour, ITickable
+    // TODO: extract Unit base class
+    public class Player : MonoBehaviour, ITickable, IDisposable
     {
         [SerializeField] private Transform rotationRoot;
         [SerializeField] private PlayerMovement movement;
@@ -19,6 +21,7 @@ namespace TowerDefence.Game.Units
         [SerializeField] private PlayerUiView uiView;
 
         private IPlayerInputSource _inputSource;
+        private bool _inputEnabled;
         private Weapon _weapon;
         private GameObject _raceModel;
 
@@ -26,6 +29,7 @@ namespace TowerDefence.Game.Units
         public HealthComponent Health => health;
         public TeamComponent Team => team;
         public RaceInfo Race { get; private set; }
+        public Weapon Weapon => _weapon;
 
         private void Awake()
         {
@@ -40,15 +44,22 @@ namespace TowerDefence.Game.Units
             team.OnTeamChanged -= OnTeamChanged;
         }
 
+        public void Dispose()
+        {
+            Destroy(gameObject);
+        }
+
         public void Tick(float deltaTime)
         {
+            if (health.IsDead) return;
+
             UpdateInput();
             _weapon?.AttackTrigger.Tick(deltaTime);
         }
 
         private void UpdateInput()
         {
-            if (_inputSource == null) return;
+            if (!_inputEnabled || _inputSource == null) return;
 
             movement.SetInput(_inputSource.MoveInput);
             _weapon.AttackTrigger.SetAttackMode(_inputSource.AttackPressed);
@@ -83,28 +94,38 @@ namespace TowerDefence.Game.Units
 
 #endregion
 
-        public void SetWinState()
+        public void SetInputEnabled(bool enabled)
         {
-            _inputSource.DisableInput();
-            _weapon.AttackTrigger.Reset();
-            // TODO: Add some "win" animation
-        }
-
-        public void SetLoseState()
-        {
-            _inputSource.DisableInput();
-            _weapon.AttackTrigger.Reset();
-            // TODO: Add some "lose" animation
+            _inputEnabled = enabled;
         }
 
         public void SetPrepareState()
         {
-            _inputSource.DisableInput();
+            // TODO: trigger some warming up animation
         }
 
-        public void SetGameplayState()
+        public void SetReadyState()
         {
-            _inputSource.EnableInput();
+            // TODO: prepare for ingame
+        }
+
+        // In this example we don't use that state, player continue from where he is, just with another team
+        public void SetDeadState()
+        {
+            _weapon.AttackTrigger.Reset();
+            // TODO: trigger death animation
+        }
+
+        public void SetWinState()
+        {
+            _weapon.AttackTrigger.Reset();
+            // TODO: trigger some "win" animation
+        }
+
+        public void SetLoseState()
+        {
+            _weapon.AttackTrigger.Reset();
+            // TODO: trigger some "lose" animation
         }
     }
 }

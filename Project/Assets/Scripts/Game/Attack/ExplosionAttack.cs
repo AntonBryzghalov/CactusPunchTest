@@ -56,7 +56,7 @@ namespace TowerDefence.Game.Attack
                     continue;
 
                 // Team check
-                if (IsInSameTeam(targetHealth.Owner.Team.TeamIndex))
+                if (targetHealth.Owner.Team.IsSameTeam(_friendlyTeamIndex))
                 {
                     continue;
                 }

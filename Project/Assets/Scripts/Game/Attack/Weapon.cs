@@ -7,17 +7,19 @@ namespace TowerDefence.Game.Attack
     [Serializable]
     public class Weapon : MonoBehaviour, IOwnerPlayer
     {
-        [SerializeReference, SubclassSelector] private IAttackTrigger _trigger;
-        [SerializeField] private BaseAttack _attack;
+        [SerializeReference, SubclassSelector] private IAttackTrigger trigger;
+        [SerializeField] private BaseAttack attack;
+        [SerializeField] private BotAttackHints botHints;
 
-        public IAttackTrigger AttackTrigger => _trigger;
-        public Player Owner => _attack.Owner;
+        public IAttackTrigger AttackTrigger => trigger;
+        public BotAttackHints BotAttackHints => botHints;
+        public Player Owner => attack.Owner;
 
         private void Start()
         {
-            _trigger.SetAttack(_attack);
+            trigger.SetAttack(attack);
         }
 
-        public void SetOwner(Player player) => _attack.SetOwner(player);
+        public void SetOwner(Player player) => attack.SetOwner(player);
     }
 }

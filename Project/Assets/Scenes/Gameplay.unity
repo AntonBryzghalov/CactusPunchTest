@@ -2461,6 +2461,7 @@ MonoBehaviour:
   teamSettings: {fileID: 11400000, guid: e5dfd1fcc54c7984a8435db7641e9d8b, type: 2}
   raceSettings: {fileID: 11400000, guid: 88baf42489b8107408f632294637cd71, type: 2}
   weaponSettings: {fileID: 11400000, guid: 34a0bac55faca2c4c80f05efebb69fbe, type: 2}
+  botsSettings: {fileID: 11400000, guid: db41c52e1d2c1f24fa339a2092aea4fe, type: 2}
   playerPrefab: {fileID: 609533104836213543, guid: ad77caf157811c745b527a093d56b2cb, type: 3}
   maxPlayers: 2
   warmupDuration: 3

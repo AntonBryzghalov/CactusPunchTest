@@ -11,70 +11,77 @@ namespace TowerDefence.Game.Round.States
     {
         private readonly IRoundManager _roundManager;
         private readonly ITeamRegistry _teamRegistry;
+        private readonly IPlayerRegistry _playerRegistry;
         private readonly IEventBus _eventBus;
+        private RoundResults _roundResults;
         private IEventToken _playerKilledToken;
 
-        public ConversionMatchState(IRoundManager roundManager, ITeamRegistry teamRegistry)
+        public ConversionMatchState(IRoundManager roundManager, ITeamRegistry teamRegistry, IPlayerRegistry playerRegistry)
         {
             _roundManager = roundManager;
             _teamRegistry = teamRegistry;
+            _playerRegistry = playerRegistry;
             _eventBus = Services.Get<IEventBus>();
         }
 
         public void OnEnter()
         {
-            foreach (var player in _roundManager.Players)
+            _roundResults = new RoundResults();
+
+            _roundManager.SetPlayerInputActive(true);
+            _playerKilledToken = _eventBus.Subscribe<PlayerKilledEvent>(OnPlayerKilled);
+            _eventBus.Publish(new RoundStartEvent());
+            foreach (var player in _playerRegistry.Players)
             {
-                player.SetGameplayState();
+                player.SetReadyState();
             }
 
-            _playerKilledToken = _eventBus.Subscribe<PlayerKilledEvent>(OnPlayerKilled);
             Debug.Log("Conversion Match started!");
+        }
+
+        public void OnExit()
+        {
+            _roundManager.SetPlayerInputActive(false);
+            _eventBus.Publish(new RoundEndEvent());
+            _eventBus.Unsubscribe(_playerKilledToken);
+            Debug.Log("Conversion Match ended!");
         }
 
         public void Tick(float deltaTime)
         {
             // TODO: move to player state (subscribe for update ticks)
-            foreach (var player in _roundManager.Players)
+            foreach (var player in _playerRegistry.Players)
             {
                 player.Tick(deltaTime);
             }
-        }
-
-        public void OnExit()
-        {
-            _eventBus.Unsubscribe(_playerKilledToken);
-            Debug.Log("Conversion Match ended!");
         }
 
         private void OnPlayerKilled(PlayerKilledEvent evt)
         {
             var newTeamIndex = evt.Attacker.Team.TeamIndex;
             Respawn(evt.Victim, newTeamIndex);
+            _roundResults.playerWinStates[evt.Victim] = false;
             CheckForGameOver(evt.Attacker);
         }
 
         private void CheckForGameOver(Player attacker)
         {
-            var firstTeamIndex = _roundManager.Players[0].Team.TeamIndex;
+            var players = _playerRegistry.Players;
+            var firstTeamIndex = players[0].Team.TeamIndex;
             var allPlayersOfTheSameTeam = true;
-            for (int i = 1; i < _roundManager.Players.Count; i++)
+            for (int i = 1; i < players.Count; i++)
             {
-                if (_roundManager.Players[i].Team.TeamIndex != firstTeamIndex)
+                if (players[i].Team.TeamIndex != firstTeamIndex)
                 {
                     allPlayersOfTheSameTeam = false;
                     break;
                 }
             }
 
-            if (!allPlayersOfTheSameTeam)
-                return;
-
-            if (attacker == _roundManager.RealPlayer)
-                _roundManager.SetWinState();
-            else
+            if (allPlayersOfTheSameTeam)
             {
-                _roundManager.SetLoseState();
+                _roundResults.playerWinStates[attacker] = true;
+                _roundManager.SetRoundEndState(_roundResults);
             }
         }
 

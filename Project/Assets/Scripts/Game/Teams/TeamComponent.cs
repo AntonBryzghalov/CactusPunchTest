@@ -24,6 +24,8 @@ namespace TowerDefence.Game.Teams
             OnTeamChanged?.Invoke(Team);
         }
 
+        public bool IsSameTeam(int otherTeamIndex) => TeamIndex >= 0 && TeamIndex == otherTeamIndex;
+
         private void SetTeamIndexToChildren()
         {
             var teamAwareComponents = GetComponentsInChildren<ITeamAware>();

@@ -9,32 +9,12 @@ namespace TowerDefence.Game.Controls
         [Range(0f, 1f)]
         [SerializeField] private float deadZone = 0.1f;
 
-        private bool _inputEnabled = true;
-
         public Vector2 MoveInput { get; private set; }
         public bool AttackPressed { get; private set; }
 
-        public void EnableInput()
-        {
-            gameObject.SetActive(true);
-            _inputEnabled = true;
-        }
-
-        public void DisableInput()
-        {
-            _inputEnabled = false;
-            joystick.Reset();
-            attackButton.Reset();
-            gameObject.SetActive(false);
-        }
-
+        // Probably bind to tick dispatcher
         private void Update()
         {
-            if (!_inputEnabled)
-            {
-                return;
-            }
-
             ReadMovementInput();
             ReadAttackInput();
         }

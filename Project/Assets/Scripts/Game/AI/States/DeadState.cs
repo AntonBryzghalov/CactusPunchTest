@@ -1,0 +1,41 @@
+using System;
+using TowerDefence.Game.AI.States;
+using TowerDefence.Game.Controls;
+using TowerDefence.Game.Units;
+using UnityEngine;
+
+namespace TowerDefence.Game.AI
+{
+    public class DeadState : IBotState
+    {
+        private readonly BufferPlayerInputSource _inputSource;
+        private readonly Player _botPlayer;
+
+        public BotStateType Intention { get; private set; }
+        public object Payload { get; }
+
+        public DeadState(BufferPlayerInputSource botInputSource, Player botPlayer)
+        {
+            _inputSource = botInputSource ?? throw new ArgumentNullException(nameof(botInputSource));
+            _botPlayer = botPlayer ?? throw new ArgumentNullException(nameof(botPlayer));
+        }
+
+        public void OnEnter()
+        {
+            _inputSource.MoveInput = Vector2.zero;
+            _inputSource.AttackPressed = false;
+        }
+
+        public void OnExit()
+        {
+        }
+
+        public void Tick(float deltaTime)
+        {
+            if (!_botPlayer.Health.IsDead)
+            {
+                Intention = BotStateType.Idle;
+            }
+        }
+    }
+}

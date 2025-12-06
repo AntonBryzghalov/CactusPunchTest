@@ -1,5 +1,5 @@
 using System;
-using TowerDefence.Common;
+using TowerDefence.Infrastructure.Randomization;
 using UnityEngine;
 using Random = UnityEngine.Random;
 

@@ -13,6 +13,8 @@ namespace TowerDefence.Game.Movement
         private Vector3 _moveInput;
         private Vector3 _impulse;
 
+        public Vector3 Forward => _viewTransform.forward;
+
         public void Initialize(Transform viewTransform)
         {
             _viewTransform = viewTransform;

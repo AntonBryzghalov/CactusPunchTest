@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace TowerDefence.Game.Controls
 {
-    public class VirtualButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+    public sealed class VirtualButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         [SerializeField] private Image image;
         [SerializeField] private Color pressedColor = Color.white;
@@ -24,6 +24,11 @@ namespace TowerDefence.Game.Controls
             {
                 _originalColor = image.color;
             }
+        }
+
+        private void OnDisable()
+        {
+            Reset();
         }
 
         public void OnPointerDown(PointerEventData eventData)

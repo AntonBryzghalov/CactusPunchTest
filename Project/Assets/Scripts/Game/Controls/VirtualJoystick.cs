@@ -3,7 +3,7 @@ using UnityEngine.EventSystems;
 
 namespace TowerDefence.Game.Controls
 {
-    public class VirtualJoystick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
+    public sealed class VirtualJoystick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
     {
         [Header("UI References")]
         public RectTransform background;
@@ -14,9 +14,14 @@ namespace TowerDefence.Game.Controls
 
         public Vector2 Direction { get; private set; }
 
-        void Start()
+        private void Start()
         {
             _radius = background.sizeDelta.x * 0.5f;
+        }
+
+        private void OnDisable()
+        {
+            Reset();
         }
 
         public void OnPointerDown(PointerEventData eventData)
@@ -33,12 +38,11 @@ namespace TowerDefence.Game.Controls
 
         public void OnDrag(PointerEventData eventData)
         {
-            Vector2 localPos;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
                 background,
                 eventData.position,
                 eventData.pressEventCamera,
-                out localPos
+                out var localPos
             );
 
             Vector2 delta = localPos - _pointerDownPos;

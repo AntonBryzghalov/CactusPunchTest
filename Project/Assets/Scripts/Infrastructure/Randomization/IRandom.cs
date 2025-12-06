@@ -1,4 +1,4 @@
-namespace TowerDefence.Common
+namespace TowerDefence.Infrastructure.Randomization
 {
     public interface IRandom<T>
     {

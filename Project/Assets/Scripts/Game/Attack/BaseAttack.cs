@@ -6,7 +6,7 @@ namespace TowerDefence.Game.Attack
 {
     public abstract class BaseAttack : MonoBehaviour, IAttack, ITeamAware
     {
-        private int _friendlyTeamIndex = -1;
+        protected int _friendlyTeamIndex = -1;
 
         public Player Owner { get; private set; }
 
@@ -15,7 +15,5 @@ namespace TowerDefence.Game.Attack
         public abstract void PerformAttack();
 
         public void SetTeamIndex(int teamIndex) => _friendlyTeamIndex = teamIndex;
-
-        protected bool IsInSameTeam(int teamIndex) => teamIndex >= 0 && _friendlyTeamIndex == teamIndex;
     }
 }
