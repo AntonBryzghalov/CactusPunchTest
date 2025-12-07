@@ -1,6 +1,5 @@
 using System;
 using TowerDefence.Core;
-using TowerDefence.Game.Events;
 using TowerDefence.Game.Units;
 using UnityEngine;
 
@@ -21,6 +20,7 @@ namespace TowerDefence.Game.Health
 
 
         public event Action<float, float> OnHealthChanged; // current, max
+        public event Action<Player, Player> OnKilled; // attacker, victim
 
         private void Awake()
         {
@@ -38,7 +38,7 @@ namespace TowerDefence.Game.Health
 
             if (CurrentHealth == 0)
             {
-                EventBus.Publish(new PlayerKilledEvent { Attacker = attacker, Victim = Owner });
+                OnKilled?.Invoke(attacker, Owner);
             }
         }
 

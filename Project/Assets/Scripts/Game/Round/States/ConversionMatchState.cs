@@ -14,7 +14,6 @@ namespace TowerDefence.Game.Round.States
         private readonly IPlayerRegistry _playerRegistry;
         private readonly IEventBus _eventBus;
         private RoundResults _roundResults;
-        private IEventToken _playerKilledToken;
 
         public ConversionMatchState(IRoundManager roundManager, ITeamRegistry teamRegistry, IPlayerRegistry playerRegistry)
         {
@@ -29,11 +28,11 @@ namespace TowerDefence.Game.Round.States
             _roundResults = new RoundResults();
 
             _roundManager.SetPlayerInputActive(true);
-            _playerKilledToken = _eventBus.Subscribe<PlayerKilledEvent>(OnPlayerKilled);
             _eventBus.Publish(new RoundStartEvent());
             foreach (var player in _playerRegistry.Players)
             {
                 player.SetReadyState();
+                player.Health.OnKilled += OnPlayerKilled;
             }
 
             Debug.Log("Conversion Match started!");
@@ -41,9 +40,13 @@ namespace TowerDefence.Game.Round.States
 
         public void OnExit()
         {
+            foreach (var player in _playerRegistry.Players)
+            {
+                player.Health.OnKilled -= OnPlayerKilled;
+            }
+
             _roundManager.SetPlayerInputActive(false);
             _eventBus.Publish(new RoundEndEvent());
-            _eventBus.Unsubscribe(_playerKilledToken);
             Debug.Log("Conversion Match ended!");
         }
 
@@ -56,12 +59,12 @@ namespace TowerDefence.Game.Round.States
             }
         }
 
-        private void OnPlayerKilled(PlayerKilledEvent evt)
+        private void OnPlayerKilled(Player attacker, Player victim)
         {
-            var newTeamIndex = evt.Attacker.Team.TeamIndex;
-            Respawn(evt.Victim, newTeamIndex);
-            _roundResults.playerWinStates[evt.Victim] = false;
-            CheckForGameOver(evt.Attacker);
+            var newTeamIndex = attacker.Team.TeamIndex;
+            Respawn(victim, newTeamIndex);
+            _roundResults.playerWinStates[victim] = false;
+            CheckForGameOver(attacker);
         }
 
         private void CheckForGameOver(Player attacker)
