@@ -2463,7 +2463,7 @@ MonoBehaviour:
   weaponSettings: {fileID: 11400000, guid: 34a0bac55faca2c4c80f05efebb69fbe, type: 2}
   botsSettings: {fileID: 11400000, guid: db41c52e1d2c1f24fa339a2092aea4fe, type: 2}
   playerPrefab: {fileID: 609533104836213543, guid: ad77caf157811c745b527a093d56b2cb, type: 3}
-  maxPlayers: 2
+  maxPlayers: 8
   warmupDuration: 3
   waitForGameOverDuration: 3
 --- !u!1 &1581173370
