@@ -99,6 +99,7 @@ namespace TowerDefence.Game.Round.Rules
         public void DespawnAllPlayers()
         {
             _playerRegistry.DisposeAllPlayers();
+            _aiManager.DisposeAllBots();
         }
 
         public void SetCameraTarget(Transform target)
