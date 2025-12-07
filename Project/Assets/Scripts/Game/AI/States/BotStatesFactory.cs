@@ -1,5 +1,4 @@
 using System;
-using TowerDefence.Core;
 using TowerDefence.Game.AI.Navigation;
 using TowerDefence.Game.AI.States;
 using TowerDefence.Game.Attack;
@@ -28,6 +27,7 @@ namespace TowerDefence.Game.AI
             var duration = Mathf.Approximately(durationRange.x, durationRange.y)
                 ? durationRange.x
                 : UnityEngine.Random.Range(durationRange.x, durationRange.y);
+
             return new IdleState(botInputSource, botPlayer, _playerRegistry, duration, settings.VisionRange);
         }
 
@@ -36,11 +36,11 @@ namespace TowerDefence.Game.AI
             return new DeadState(botInputSource, botPlayer);
         }
 
-        public IBotState CreateSearchForTargetState(
+        public IBotState CreateRoamingState(
             BufferPlayerInputSource botInputSource,
             Player botPlayer)
         {
-            return new SearchForTargetState(
+            return new RoamingState(
                 botInputSource,
                 botPlayer,
                 _playerRegistry,

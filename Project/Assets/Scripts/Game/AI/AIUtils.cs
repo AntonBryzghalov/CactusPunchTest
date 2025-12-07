@@ -1,8 +1,9 @@
+using TowerDefence.ExtensionMethods;
 using TowerDefence.Game.Units;
 using TowerDefence.Providers;
 using UnityEngine;
 
-namespace TowerDefence.Game.AI.States
+namespace TowerDefence.Game.AI
 {
     public static class AIUtils
     {
@@ -17,7 +18,7 @@ namespace TowerDefence.Game.AI.States
                 if (botPlayer == player) continue;
                 if (botPlayer.Team.IsSameTeam(player.Team.TeamIndex)) continue;
 
-                var distanceSquared = (player.transform.position - botPosition.Value).sqrMagnitude;
+                var distanceSquared = (player.transform.position.ToVector2XZ() - botPosition.Value.ToVector2XZ()).sqrMagnitude;
                 if (distanceSquared > visionRangeSquared) continue;
 
                 if (distanceSquared < closestDistance)

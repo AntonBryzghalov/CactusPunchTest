@@ -37,6 +37,7 @@ namespace TowerDefence.Game.AI
 
         public void OnEnter()
         {
+            //Debug.Log("Entering IdleState");
             _inputSource.MoveInput = Vector2.zero;
             _timer = _duration;
             _botPlayer.Health.OnHealthChanged += OnHealthChanged;
@@ -45,6 +46,7 @@ namespace TowerDefence.Game.AI
         public void OnExit()
         {
             _botPlayer.Health.OnHealthChanged -= OnHealthChanged;
+            //Debug.Log("Exiting IdleState");
         }
 
         public void Tick(float deltaTime)
@@ -60,13 +62,13 @@ namespace TowerDefence.Game.AI
             _timer -= deltaTime;
             if (_timer <= 0)
             {
-                Intention = BotStateType.SearchForTarget;
+                Intention = BotStateType.Roaming;
             }
         }
 
         private void OnHealthChanged(float before, float after)
         {
-            Intention = BotStateType.SearchForTarget;
+            Intention = BotStateType.Roaming;
         }
     }
 }

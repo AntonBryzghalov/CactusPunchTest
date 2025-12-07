@@ -8,6 +8,7 @@ namespace TowerDefence.Game.Movement
         [SerializeField] private float movementSpeed;
         [SerializeField] private float rotationSpeed;
         [SerializeField, Min(0.01f)] private float impulseDragFactor = 1f;
+        [SerializeField, Range(0.01f, 1f)] private float rotationInputThreshold = 0.1f;
 
         private Transform _viewTransform;
         private Vector3 _moveInput;
@@ -57,7 +58,7 @@ namespace TowerDefence.Game.Movement
 
         private void LateUpdate()
         {
-            if (Mathf.Approximately(_moveInput.sqrMagnitude, 0f)) return;
+            if (_moveInput.sqrMagnitude < rotationInputThreshold * rotationInputThreshold) return;
 
             _viewTransform.localRotation =
                 Quaternion.Slerp(_viewTransform.localRotation, Quaternion.LookRotation(_moveInput), rotationSpeed * Time.deltaTime);

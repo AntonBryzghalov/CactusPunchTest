@@ -14,19 +14,18 @@ namespace TowerDefence.Game.AI
 
     public class SimpleBot : IBot
     {
-        private readonly BotStatesFactory _statesFactory;
         private readonly Player _player;
+        private readonly BotStatesFactory _statesFactory;
         private readonly BotStateMachine _stateMachine;
         private readonly BufferPlayerInputSource _inputSource;
 
-        public SimpleBot(
-            Player controlledPlayer,
-            BotStatesFactory statesFactory)
+        public SimpleBot(Player controlledPlayer, BotStatesFactory statesFactory)
         {
             _statesFactory = statesFactory ?? throw new ArgumentNullException(nameof(statesFactory));
             _player = controlledPlayer ?? throw new ArgumentNullException(nameof(controlledPlayer));
             _stateMachine = new BotStateMachine();
             _inputSource = new BufferPlayerInputSource();
+            _player.SetInputSource(_inputSource);
         }
 
         public void Tick(float deltaTime)
@@ -40,7 +39,7 @@ namespace TowerDefence.Game.AI
 
         public void OnRoundStart()
         {
-            _stateMachine.SetState(_statesFactory.CreateSearchForTargetState(_inputSource, _player));
+            _stateMachine.SetState(_statesFactory.CreateRoamingState(_inputSource, _player));
         }
 
         public void OnRoundEnd()
@@ -54,22 +53,15 @@ namespace TowerDefence.Game.AI
             {
                 BotStateType.Idle => _statesFactory.CreateIdleState(_inputSource, _player),
                 BotStateType.Dead => _statesFactory.CreateDeadState(_inputSource, _player),
-                BotStateType.SearchForTarget =>
-                    _statesFactory.CreateSearchForTargetState(_inputSource, _player),
-                BotStateType.MoveToTarget =>
-                    _statesFactory.CreateMoveToTargetState(
-                        _inputSource,
-                        _player,
-                        (Player)payload,
-                        _player.Weapon.BotAttackHints),
-                BotStateType.AttackTarget =>
-                    _statesFactory.CreateAttackTargetState(_inputSource, _player, (Player)payload),
+                BotStateType.Roaming => _statesFactory.CreateRoamingState(_inputSource, _player),
+                BotStateType.MoveToTarget => _statesFactory.CreateMoveToTargetState(_inputSource, _player,
+                    (Player)payload, _player.Weapon.BotAttackHints),
+                BotStateType.AttackTarget => _statesFactory.CreateAttackTargetState(_inputSource, _player, (Player)payload),
+
                 _ => throw new ArgumentOutOfRangeException(nameof(newStateType), newStateType, null)
             };
 
             _stateMachine.SetState(newState);
         }
     }
-
-    // TODO: improve internal logic for different types of attack
 }

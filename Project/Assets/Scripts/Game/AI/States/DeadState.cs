@@ -22,12 +22,14 @@ namespace TowerDefence.Game.AI
 
         public void OnEnter()
         {
+            //Debug.Log("Entering DeadState");
             _inputSource.MoveInput = Vector2.zero;
             _inputSource.AttackPressed = false;
         }
 
         public void OnExit()
         {
+            //Debug.Log("Exiting DeadState");
         }
 
         public void Tick(float deltaTime)

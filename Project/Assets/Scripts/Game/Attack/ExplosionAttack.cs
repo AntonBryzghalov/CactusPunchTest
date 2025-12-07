@@ -1,3 +1,4 @@
+using TowerDefence.ExtensionMethods;
 using TowerDefence.Game.Health;
 using UnityEngine;
 
@@ -63,8 +64,7 @@ namespace TowerDefence.Game.Attack
 
                 // Calculate damage
                 var colliderRadius = collider is CapsuleCollider capsuleCollider ? capsuleCollider.radius : 0f;
-                var hitRangeVector = collider.transform.position - pivot.position;
-                hitRangeVector.y = 0;
+                var hitRangeVector = (collider.transform.position - pivot.position).WithY(0f);
                 var actualHitRange = hitRangeVector.magnitude - colliderRadius;
                 var powerFactor = actualHitRange / radius;
                 var damage = Mathf.Lerp(damageMax, damageMin, powerFactor);

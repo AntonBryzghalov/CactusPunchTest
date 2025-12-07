@@ -1,4 +1,5 @@
 using System;
+using TowerDefence.ExtensionMethods;
 using TowerDefence.Game.AI.Navigation;
 using TowerDefence.Game.Controls;
 using TowerDefence.Game.Units;
@@ -7,7 +8,7 @@ using UnityEngine;
 
 namespace TowerDefence.Game.AI.States
 {
-    public class SearchForTargetState : IBotState
+    public class RoamingState : IBotState
     {
         private readonly BufferPlayerInputSource _inputSource;
         private readonly Player _botPlayer;
@@ -20,9 +21,8 @@ namespace TowerDefence.Game.AI.States
         
         public BotStateType Intention { get; private set; }
         public object Payload { get; private set; }
-        private Vector3 DistanceVector => _currentMoveTarget.Value - _botPosition.Value;
 
-        public SearchForTargetState(
+        public RoamingState(
             BufferPlayerInputSource botInputSource,
             Player botPlayer,
             IPlayerRegistry playerRegistry,
@@ -41,18 +41,31 @@ namespace TowerDefence.Game.AI.States
 
         public void OnEnter()
         {
+            //Debug.Log("Entering RoamingState");
             Intention = BotStateType.None;
             Payload = null;
             _currentMoveTarget = _waypointGenerator.GetNextWaypoint();
         }
 
-        public void OnExit() {}
+        public void OnExit()
+        {
+            _inputSource.MoveInput = Vector2.zero;
+            //Debug.Log("Exiting RoamingState");
+        }
 
         public void Tick(float deltaTime)
         {
             if (CheckForTargets()) return;
-            if (IsWaypointReached()) _currentMoveTarget = _waypointGenerator.GetNextWaypoint();
-            _inputSource.MoveInput = DistanceVector.normalized;
+            var distanceVector = _currentMoveTarget.Value.ToVector2XZ() - _botPosition.Value.ToVector2XZ();
+            //Debug.Log($"Distance: {distanceVector.magnitude}");
+            var isWaypointReached = distanceVector.sqrMagnitude <= _waypointDistanceThresholdSquared;
+            if (isWaypointReached)
+            {
+                Intention = BotStateType.Idle;
+                return;
+            }
+
+            _inputSource.MoveInput = distanceVector.normalized;
         }
 
         private bool CheckForTargets()
@@ -62,11 +75,6 @@ namespace TowerDefence.Game.AI.States
             Intention = BotStateType.MoveToTarget;
             Payload = closestEnemy;
             return true;
-        }
-
-        private bool IsWaypointReached()
-        {
-            return DistanceVector.sqrMagnitude <= _waypointDistanceThresholdSquared;
         }
     }
 }

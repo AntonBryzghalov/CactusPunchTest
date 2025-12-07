@@ -1,4 +1,5 @@
 using System;
+using TowerDefence.ExtensionMethods;
 using TowerDefence.Game.Attack;
 using TowerDefence.Game.Controls;
 using TowerDefence.Game.Units;
@@ -7,6 +8,7 @@ using UnityEngine;
 
 namespace TowerDefence.Game.AI.States
 {
+    // TODO: improve internal logic for different types of attack
     public class AttackTargetState : IBotState
     {
         private readonly BufferPlayerInputSource _inputSource;
@@ -33,12 +35,14 @@ namespace TowerDefence.Game.AI.States
 
         public void OnEnter()
         {
+            //Debug.Log("Entering AttackTargetState");
             _inputSource.AttackPressed = true;
         }
 
         public void OnExit()
         {
             _inputSource.AttackPressed = false;
+            //Debug.Log("Exiting AttackTargetState");
         }
 
         public void Tick(float deltaTime)
@@ -54,14 +58,13 @@ namespace TowerDefence.Game.AI.States
                 IsTargetOutOfWeaponSight())
             {
                 Intention = BotStateType.Idle;
-                return;
             }
         }
 
         private bool IsTargetOutOfWeaponSight()
         {
             var maxDistanceSquared = _attackHints.desiredAttackRange.y * _attackHints.desiredAttackRange.y;
-            var directionVector = _targetPosition.Value - _botPosition.Value;
+            var directionVector = _targetPosition.Value.ToVector2XZ() - _botPosition.Value.ToVector2XZ();
             var distanceSquared = directionVector.sqrMagnitude;
             if (distanceSquared > maxDistanceSquared)
             {

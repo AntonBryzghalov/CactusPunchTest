@@ -5,7 +5,7 @@ namespace TowerDefence.Game.AI.States
         None,
         Idle,
         Dead,
-        SearchForTarget,
+        Roaming,
         MoveToTarget,
         AttackTarget,
     }

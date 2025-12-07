@@ -1,4 +1,5 @@
 using System;
+using TowerDefence.ExtensionMethods;
 using TowerDefence.Game.AI.States;
 using TowerDefence.Game.Attack;
 using TowerDefence.Game.Controls;
@@ -19,7 +20,7 @@ namespace TowerDefence.Game.AI
         private readonly Player _target;
         private readonly IProvider<Vector3> _targetPosition;
         private readonly float _visionRangeSquared;
-        private float _distanceThresholdSquared;
+        private readonly float _distanceThresholdSquared;
 
         public BotStateType Intention { get; private set; }
         public object Payload { get; private set; }
@@ -39,17 +40,18 @@ namespace TowerDefence.Game.AI
             _target = target ?? throw new ArgumentNullException(nameof(target));
             _targetPosition = new TransformPositionProvider(_target.transform);
             _visionRangeSquared = visionRange * visionRange;
+            _distanceThresholdSquared = GetDistanceThresholdSquared(_attackHints.desiredAttackRange);
         }
 
         public void OnEnter()
         {
-            var range = _attackHints.desiredAttackRange;
-            var distanceThreshold = Random.Range(range.x, range.y);
-            _distanceThresholdSquared = distanceThreshold * distanceThreshold;
+            //Debug.Log("Entering MoveToTargetState");
         }
 
         public void OnExit()
         {
+            _inputSource.MoveInput = Vector2.zero;
+            //Debug.Log("Exiting MoveToTargetState");
         }
 
         public void Tick(float deltaTime)
@@ -57,17 +59,17 @@ namespace TowerDefence.Game.AI
             // Checking if target is still valid
             if (_target.Health.IsDead || _target.Team.IsSameTeam(_botTeamComponent.TeamIndex))
             {
-                Intention = BotStateType.SearchForTarget;
+                Intention = BotStateType.Idle;
                 return;
             }
 
-            var distanceVector = _targetPosition.Value - _botPosition.Value;
-            var distanceSquared = distanceVector.sqrMagnitude;
+            var directionVector = _targetPosition.Value.ToVector2XZ() - _botPosition.Value.ToVector2XZ();
+            var distanceSquared = directionVector.sqrMagnitude;
 
             // If target is too far then bot lost it
             if (distanceSquared > _visionRangeSquared)
             {
-                Intention = BotStateType.SearchForTarget;
+                Intention = BotStateType.Idle;
                 return;
             }
 
@@ -79,7 +81,13 @@ namespace TowerDefence.Game.AI
                 return;
             }
 
-            _inputSource.MoveInput = distanceVector.normalized;
+            _inputSource.MoveInput = directionVector.normalized;
+        }
+
+        private float GetDistanceThresholdSquared(Vector2 range)
+        {
+            var distanceThreshold = Random.Range(range.x, range.y);
+            return distanceThreshold * distanceThreshold;
         }
     }
 }
