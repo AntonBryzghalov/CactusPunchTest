@@ -97,7 +97,7 @@ namespace TowerDefence.Game.Round.Rules
         // TODO: Move to SceneCompositionRoot
         private void DoComposition()
         {
-            _playerRegistry = new PlayerRegistry();
+            _playerRegistry = Services.Get<IPlayerRegistry>();
             _waypointGeneratorFactory = new SquarePlaneRandomPositionGeneratorFactory(
                 Vector2.one * -25f,
                 Vector2.one * 25f,

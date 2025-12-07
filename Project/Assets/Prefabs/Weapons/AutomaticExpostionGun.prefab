@@ -102,39 +102,19 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 674139088722423530, guid: 560707cc51680094998473788d710f4d, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2763484258573374837}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 560707cc51680094998473788d710f4d, type: 3}
 --- !u!114 &4598387743884027311 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6598332372596677553, guid: 560707cc51680094998473788d710f4d, type: 3}
   m_PrefabInstance: {fileID: 7224122482631015966}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7861658713837474036}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4fbf623c1c2fa424d9ad6ac01138562d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TowerDefence.Game.Player.ExplosionAttack
---- !u!1 &7861658713837474036 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 674139088722423530, guid: 560707cc51680094998473788d710f4d, type: 3}
-  m_PrefabInstance: {fileID: 7224122482631015966}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &2763484258573374837
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7861658713837474036}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1b99b5befe5e804da77f54785aa6ab8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GizmosDrawer
 --- !u!4 &9000502777902094424 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1776960914825094726, guid: 560707cc51680094998473788d710f4d, type: 3}
