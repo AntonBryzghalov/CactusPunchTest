@@ -46,7 +46,7 @@ namespace TowerDefence.Game.Units
 
         public void Dispose()
         {
-            Destroy(gameObject);
+            if (gameObject) Destroy(gameObject);
         }
 
         public void Tick(float deltaTime)
