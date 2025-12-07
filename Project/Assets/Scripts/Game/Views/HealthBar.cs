@@ -1,6 +1,5 @@
 using TowerDefence.Game.Health;
 using TowerDefence.Game.Settings;
-using TowerDefence.Game.Units;
 using UnityEngine;
 using UnityEngine.UI;
 

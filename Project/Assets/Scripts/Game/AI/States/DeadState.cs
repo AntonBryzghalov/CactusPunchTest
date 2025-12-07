@@ -1,7 +1,7 @@
 using System;
 using TowerDefence.Game.AI.States;
 using TowerDefence.Game.Controls;
-using TowerDefence.Game.Units;
+using TowerDefence.Game.Units.Player;
 using UnityEngine;
 
 namespace TowerDefence.Game.AI
@@ -9,12 +9,12 @@ namespace TowerDefence.Game.AI
     public class DeadState : IBotState
     {
         private readonly BufferPlayerInputSource _inputSource;
-        private readonly Player _botPlayer;
+        private readonly PlayerComponent _botPlayer;
 
         public BotStateType Intention { get; private set; }
         public object Payload { get; }
 
-        public DeadState(BufferPlayerInputSource botInputSource, Player botPlayer)
+        public DeadState(BufferPlayerInputSource botInputSource, PlayerComponent botPlayer)
         {
             _inputSource = botInputSource ?? throw new ArgumentNullException(nameof(botInputSource));
             _botPlayer = botPlayer ?? throw new ArgumentNullException(nameof(botPlayer));

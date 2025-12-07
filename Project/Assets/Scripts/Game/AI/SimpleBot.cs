@@ -2,7 +2,7 @@ using System;
 using TowerDefence.Core;
 using TowerDefence.Game.AI.States;
 using TowerDefence.Game.Controls;
-using TowerDefence.Game.Units;
+using TowerDefence.Game.Units.Player;
 
 namespace TowerDefence.Game.AI
 {
@@ -14,12 +14,12 @@ namespace TowerDefence.Game.AI
 
     public class SimpleBot : IBot
     {
-        private readonly Player _player;
+        private readonly PlayerComponent _player;
         private readonly BotStatesFactory _statesFactory;
         private readonly BotStateMachine _stateMachine;
         private readonly BufferPlayerInputSource _inputSource;
 
-        public SimpleBot(Player controlledPlayer, BotStatesFactory statesFactory)
+        public SimpleBot(PlayerComponent controlledPlayer, BotStatesFactory statesFactory)
         {
             _statesFactory = statesFactory ?? throw new ArgumentNullException(nameof(statesFactory));
             _player = controlledPlayer ?? throw new ArgumentNullException(nameof(controlledPlayer));
@@ -55,8 +55,8 @@ namespace TowerDefence.Game.AI
                 BotStateType.Dead => _statesFactory.CreateDeadState(_inputSource, _player),
                 BotStateType.Roaming => _statesFactory.CreateRoamingState(_inputSource, _player),
                 BotStateType.MoveToTarget => _statesFactory.CreateMoveToTargetState(_inputSource, _player,
-                    (Player)payload, _player.Weapon.BotAttackHints),
-                BotStateType.AttackTarget => _statesFactory.CreateAttackTargetState(_inputSource, _player, (Player)payload),
+                    (PlayerComponent)payload, _player.WeaponAttackHints),
+                BotStateType.AttackTarget => _statesFactory.CreateAttackTargetState(_inputSource, _player, (PlayerComponent)payload),
 
                 _ => throw new ArgumentOutOfRangeException(nameof(newStateType), newStateType, null)
             };

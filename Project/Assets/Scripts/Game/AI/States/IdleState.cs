@@ -2,7 +2,7 @@ using System;
 using TowerDefence.Core;
 using TowerDefence.Game.AI.States;
 using TowerDefence.Game.Controls;
-using TowerDefence.Game.Units;
+using TowerDefence.Game.Units.Player;
 using TowerDefence.Providers;
 using UnityEngine;
 
@@ -11,7 +11,7 @@ namespace TowerDefence.Game.AI
     public class IdleState : IBotState
     {
         private readonly BufferPlayerInputSource _inputSource;
-        private readonly Player _botPlayer;
+        private readonly PlayerComponent _botPlayer;
         private readonly IProvider<Vector3> _botPosition;
         private readonly IPlayerRegistry _playerRegistry;
         private readonly float _duration;
@@ -23,7 +23,7 @@ namespace TowerDefence.Game.AI
 
         public IdleState(
             BufferPlayerInputSource botInputSource,
-            Player botPlayer,
+            PlayerComponent botPlayer,
             float duration,
             float visionRange)
         {

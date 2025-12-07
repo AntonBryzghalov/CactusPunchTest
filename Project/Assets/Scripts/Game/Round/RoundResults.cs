@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using TowerDefence.Game.Units;
+using TowerDefence.Game.Units.Player;
 
 namespace TowerDefence.Game.Round
 {
@@ -7,6 +7,6 @@ namespace TowerDefence.Game.Round
     {
         public bool IsTeamMode;
         public int WinnerTeamIndex = -1;
-        public readonly Dictionary<Player, bool> playerWinStates = new Dictionary<Player, bool>();
+        public readonly Dictionary<PlayerComponent, bool> playerWinStates = new Dictionary<PlayerComponent, bool>();
     }
 }

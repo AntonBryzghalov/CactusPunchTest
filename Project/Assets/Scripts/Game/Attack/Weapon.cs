@@ -1,5 +1,5 @@
 using System;
-using TowerDefence.Game.Units;
+using TowerDefence.Game.Units.Player;
 using UnityEngine;
 
 namespace TowerDefence.Game.Attack
@@ -13,13 +13,13 @@ namespace TowerDefence.Game.Attack
 
         public IAttackTrigger AttackTrigger => trigger;
         public BotAttackHints BotAttackHints => botHints;
-        public Player Owner => attack.Owner;
+        public PlayerComponent Owner => attack.Owner;
 
         private void Start()
         {
             trigger.SetAttack(attack);
         }
 
-        public void SetOwner(Player player) => attack.SetOwner(player);
+        public void SetOwner(PlayerComponent player) => attack.SetOwner(player);
     }
 }

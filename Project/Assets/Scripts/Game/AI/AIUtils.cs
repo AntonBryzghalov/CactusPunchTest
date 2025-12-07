@@ -1,5 +1,5 @@
 using TowerDefence.ExtensionMethods;
-using TowerDefence.Game.Units;
+using TowerDefence.Game.Units.Player;
 using TowerDefence.Providers;
 using UnityEngine;
 
@@ -7,12 +7,12 @@ namespace TowerDefence.Game.AI
 {
     public static class AIUtils
     {
-        public static Player GetClosestEnemyInSight(IPlayerRegistry playerRegistry, Player botPlayer,
+        public static PlayerComponent GetClosestEnemyInSight(IPlayerRegistry playerRegistry, PlayerComponent botPlayer,
             IProvider<Vector3> botPosition, float visionRangeSquared)
         {
             var players = playerRegistry.Players;
             float closestDistance = float.MaxValue;
-            Player result = null;
+            PlayerComponent result = null;
             foreach (var player in players)
             {
                 if (botPlayer == player) continue;

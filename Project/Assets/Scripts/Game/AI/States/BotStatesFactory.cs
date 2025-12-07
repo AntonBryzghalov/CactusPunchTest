@@ -3,7 +3,7 @@ using TowerDefence.Game.AI.Navigation;
 using TowerDefence.Game.AI.States;
 using TowerDefence.Game.Attack;
 using TowerDefence.Game.Controls;
-using TowerDefence.Game.Units;
+using TowerDefence.Game.Units.Player;
 using UnityEngine;
 
 namespace TowerDefence.Game.AI
@@ -19,7 +19,7 @@ namespace TowerDefence.Game.AI
             _waypointGenerator = waypointGenerator ?? throw new ArgumentNullException(nameof(waypointGenerator));
         }
 
-        public IBotState CreateIdleState(BufferPlayerInputSource botInputSource, Player botPlayer)
+        public IBotState CreateIdleState(BufferPlayerInputSource botInputSource, PlayerComponent botPlayer)
         {
             var durationRange = settings.IdleStateDurationRange;
             var duration = Mathf.Approximately(durationRange.x, durationRange.y)
@@ -29,14 +29,14 @@ namespace TowerDefence.Game.AI
             return new IdleState(botInputSource, botPlayer, duration, settings.VisionRange);
         }
 
-        public IBotState CreateDeadState(BufferPlayerInputSource botInputSource, Player botPlayer)
+        public IBotState CreateDeadState(BufferPlayerInputSource botInputSource, PlayerComponent botPlayer)
         {
             return new DeadState(botInputSource, botPlayer);
         }
 
         public IBotState CreateRoamingState(
             BufferPlayerInputSource botInputSource,
-            Player botPlayer)
+            PlayerComponent botPlayer)
         {
             return new RoamingState(
                 botInputSource,
@@ -48,8 +48,8 @@ namespace TowerDefence.Game.AI
 
         public IBotState CreateMoveToTargetState(
             BufferPlayerInputSource botInputSource,
-            Player botPlayer,
-            Player target,
+            PlayerComponent botPlayer,
+            PlayerComponent target,
             BotAttackHints attackHints)
         {
             return new MoveToTargetState(botInputSource, botPlayer, target, attackHints, settings.VisionRange);
@@ -57,8 +57,8 @@ namespace TowerDefence.Game.AI
 
         public IBotState CreateAttackTargetState(
             BufferPlayerInputSource botInputSource,
-            Player botPlayer,
-            Player target)
+            PlayerComponent botPlayer,
+            PlayerComponent target)
         {
             return new AttackTargetState(botInputSource, botPlayer, target);
         }

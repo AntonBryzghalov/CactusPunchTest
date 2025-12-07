@@ -1,7 +1,7 @@
 using Cysharp.Threading.Tasks;
 using TowerDefence.Core;
 using TowerDefence.Game.Round.Rules;
-using TowerDefence.Game.Units;
+using TowerDefence.Game.Units.Player;
 using TowerDefence.UI;
 using TowerDefence.UI.CommonScreens;
 using UnityEngine;

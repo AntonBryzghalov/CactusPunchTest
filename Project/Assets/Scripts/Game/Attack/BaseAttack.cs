@@ -1,5 +1,5 @@
 using TowerDefence.Game.Teams;
-using TowerDefence.Game.Units;
+using TowerDefence.Game.Units.Player;
 using UnityEngine;
 
 namespace TowerDefence.Game.Attack
@@ -8,9 +8,9 @@ namespace TowerDefence.Game.Attack
     {
         protected int _friendlyTeamIndex = -1;
 
-        public Player Owner { get; private set; }
+        public PlayerComponent Owner { get; private set; }
 
-        public void SetOwner(Player ownerPlayer) => Owner = ownerPlayer;
+        public void SetOwner(PlayerComponent ownerPlayer) => Owner = ownerPlayer;
 
         public abstract void PerformAttack();
 

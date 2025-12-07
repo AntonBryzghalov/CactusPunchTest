@@ -1,6 +1,6 @@
 using System;
 using TowerDefence.Core;
-using TowerDefence.Game.Units;
+using TowerDefence.Game.Units.Player;
 using UnityEngine;
 
 namespace TowerDefence.Game.Health
@@ -15,20 +15,19 @@ namespace TowerDefence.Game.Health
         public float MaxHealth => settings.MaxHealth;
         public float CurrentHealth { get; private set; }
         public bool IsDead => CurrentHealth <= 0;
-        public Player Owner { get; private set; }
-        private IEventBus EventBus => _eventBus ??= Services.Get<IEventBus>();
+        public PlayerComponent Owner { get; private set; }
 
         public event Action<float, float> OnHealthChanged; // current, max
-        public event Action<Player, Player> OnKilled; // attacker, victim
+        public event Action<PlayerComponent, PlayerComponent> OnKilled; // attacker, victim
 
         private void Awake()
         {
             ResetHealth();
         }
 
-        public void SetOwner(Player player) => Owner = player;
+        public void SetOwner(PlayerComponent player) => Owner = player;
 
-        public void TakeDamage(float amount, Player attacker)
+        public void TakeDamage(float amount, PlayerComponent attacker)
         {
             if (IsDead) return;
             if (amount <= 0) return;

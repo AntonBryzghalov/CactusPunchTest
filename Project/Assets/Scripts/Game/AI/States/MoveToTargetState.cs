@@ -4,7 +4,7 @@ using TowerDefence.Game.AI.States;
 using TowerDefence.Game.Attack;
 using TowerDefence.Game.Controls;
 using TowerDefence.Game.Teams;
-using TowerDefence.Game.Units;
+using TowerDefence.Game.Units.Player;
 using TowerDefence.Providers;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -17,7 +17,7 @@ namespace TowerDefence.Game.AI
         private readonly IProvider<Vector3> _botPosition;
         private readonly TeamComponent _botTeamComponent;
         private readonly BotAttackHints _attackHints;
-        private readonly Player _target;
+        private readonly PlayerComponent _target;
         private readonly IProvider<Vector3> _targetPosition;
         private readonly float _visionRangeSquared;
         private readonly float _distanceThresholdSquared;
@@ -27,8 +27,8 @@ namespace TowerDefence.Game.AI
 
         public MoveToTargetState(
             BufferPlayerInputSource botInputSource,
-            Player botPlayer,
-            Player target,
+            PlayerComponent botPlayer,
+            PlayerComponent target,
             BotAttackHints attackHints,
             float visionRange)
         {

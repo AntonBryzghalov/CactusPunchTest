@@ -9,7 +9,7 @@ using TowerDefence.Game.Round.States;
 using TowerDefence.Game.Settings;
 using TowerDefence.Game.Spawning;
 using TowerDefence.Game.Teams;
-using TowerDefence.Game.Units;
+using TowerDefence.Game.Units.Player;
 using TowerDefence.Infrastructure.Factory;
 using Unity.Cinemachine;
 using UnityEngine;
@@ -27,7 +27,7 @@ namespace TowerDefence.Game.Round.Rules
         [SerializeField] protected RaceSettings raceSettings;
         [SerializeField] protected WeaponSettings weaponSettings;
         [SerializeField] private BotsSettings botsSettings;
-        [SerializeField] private Player playerPrefab;
+        [SerializeField] private PlayerComponent playerPrefab;
 
         [Header("Rules")]
         [SerializeField, Min(1)] private int maxPlayers = 4;
@@ -46,7 +46,7 @@ namespace TowerDefence.Game.Round.Rules
         private BotStatesFactory _botStatesFactory;
         private BotFactory _botFactory;
 
-        public Player RealPlayer => _playerRegistry.Players[0];
+        public PlayerComponent RealPlayer => _playerRegistry.Players[0];
         private PlayerBuilder PlayerBuilder => _playerBuilder ??= new PlayerBuilder(playerPrefab);
 
         private void Awake()
@@ -149,7 +149,7 @@ namespace TowerDefence.Game.Round.Rules
         }
 
         // TODO: move to PlayerSpawner or something like this
-        private Player SpawnPlayer(SpawnPointComponent spawnPoint, int teamIndex, bool isRealPlayer)
+        private PlayerComponent SpawnPlayer(SpawnPointComponent spawnPoint, int teamIndex, bool isRealPlayer)
         {
             var spawnTransform = spawnPoint.transform;
             var race = raceSettings.GetRandom();

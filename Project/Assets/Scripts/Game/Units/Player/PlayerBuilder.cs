@@ -5,15 +5,15 @@ using TowerDefence.Game.Rules.ConversionClash;
 using TowerDefence.Game.Settings;
 using UnityEngine;
 
-namespace TowerDefence.Game.Units
+namespace TowerDefence.Game.Units.Player
 {
     /// <summary>
     /// This class ensures the correct order of Player initialization (components injection)
     /// </summary>
     public class PlayerBuilder
     {
-        private readonly Player _playerPrefab;
-        private Player _player;
+        private readonly PlayerComponent _playerPrefab;
+        private PlayerComponent _player;
         private RaceInfo _race;
         private IPlayerInputSource _inputSource;
         private Weapon _weapon;
@@ -22,7 +22,7 @@ namespace TowerDefence.Game.Units
         private Vector3 _position;
         private Quaternion _rotation;
 
-        public PlayerBuilder(Player playerPrefab)
+        public PlayerBuilder(PlayerComponent playerPrefab)
         {
             if (playerPrefab == null) throw new ArgumentNullException(nameof(playerPrefab));
             _playerPrefab = playerPrefab;
@@ -76,7 +76,7 @@ namespace TowerDefence.Game.Units
             return this;
         }
 
-        public Player Build()
+        public PlayerComponent Build()
         {
             if (_player == null) CreateNewPlayer();
 

@@ -3,7 +3,7 @@ using TowerDefence.Core;
 using TowerDefence.ExtensionMethods;
 using TowerDefence.Game.AI.Navigation;
 using TowerDefence.Game.Controls;
-using TowerDefence.Game.Units;
+using TowerDefence.Game.Units.Player;
 using TowerDefence.Providers;
 using UnityEngine;
 
@@ -12,7 +12,7 @@ namespace TowerDefence.Game.AI.States
     public class RoamingState : IBotState
     {
         private readonly BufferPlayerInputSource _inputSource;
-        private readonly Player _botPlayer;
+        private readonly PlayerComponent _botPlayer;
         private readonly IProvider<Vector3> _botPosition;
         private readonly IWaypointGenerator _waypointGenerator;
         private readonly IPlayerRegistry _playerRegistry;
@@ -25,7 +25,7 @@ namespace TowerDefence.Game.AI.States
 
         public RoamingState(
             BufferPlayerInputSource botInputSource,
-            Player botPlayer,
+            PlayerComponent botPlayer,
             IWaypointGenerator waypointGenerator,
             float waypointDistanceThreshold,
             float visionRange)

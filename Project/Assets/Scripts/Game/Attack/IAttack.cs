@@ -1,4 +1,4 @@
-using TowerDefence.Game.Units;
+using TowerDefence.Game.Units.Player;
 
 namespace TowerDefence.Game.Attack
 {

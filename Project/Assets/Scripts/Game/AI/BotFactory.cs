@@ -1,4 +1,4 @@
-using TowerDefence.Game.Units;
+using TowerDefence.Game.Units.Player;
 
 namespace TowerDefence.Game.AI
 {
@@ -11,7 +11,7 @@ namespace TowerDefence.Game.AI
             _botStatesFactory = botStatesFactory;
         }
 
-        public IBot CreateBot(Player player)
+        public IBot CreateBot(PlayerComponent player)
         {
             return new SimpleBot(player, _botStatesFactory);
         }

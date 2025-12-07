@@ -2,7 +2,7 @@ using TowerDefence.Core;
 using TowerDefence.Game.Events;
 using TowerDefence.Game.Round.Rules;
 using TowerDefence.Game.Rules.ConversionClash;
-using TowerDefence.Game.Units;
+using TowerDefence.Game.Units.Player;
 using UnityEngine;
 
 namespace TowerDefence.Game.Round.States
@@ -57,7 +57,7 @@ namespace TowerDefence.Game.Round.States
             }
         }
 
-        private void OnPlayerKilled(Player attacker, Player victim)
+        private void OnPlayerKilled(PlayerComponent attacker, PlayerComponent victim)
         {
             var newTeamIndex = attacker.Team.TeamIndex;
             Respawn(victim, newTeamIndex);
@@ -65,7 +65,7 @@ namespace TowerDefence.Game.Round.States
             CheckForGameOver(attacker);
         }
 
-        private void CheckForGameOver(Player attacker)
+        private void CheckForGameOver(PlayerComponent attacker)
         {
             var players = _playerRegistry.Players;
             var firstTeamIndex = players[0].Team.TeamIndex;
@@ -87,7 +87,7 @@ namespace TowerDefence.Game.Round.States
             }
         }
 
-        private void Respawn(Player victim, int teamIndex)
+        private void Respawn(PlayerComponent victim, int teamIndex)
         {
             victim.Health.ResetHealth();
             victim.Team.SetTeam(_teamRegistry, teamIndex);

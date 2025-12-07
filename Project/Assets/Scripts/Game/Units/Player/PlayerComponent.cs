@@ -9,10 +9,10 @@ using TowerDefence.Game.Teams;
 using TowerDefence.Game.Views;
 using UnityEngine;
 
-namespace TowerDefence.Game.Units
+namespace TowerDefence.Game.Units.Player
 {
     // TODO: extract Unit base class
-    public class Player : MonoBehaviour, ITickable, IDisposable
+    public class PlayerComponent : MonoBehaviour, ITickable, IDisposable
     {
         [SerializeField] private Transform rotationRoot;
         [SerializeField] private PlayerMovement movement;
@@ -24,12 +24,14 @@ namespace TowerDefence.Game.Units
         private bool _inputEnabled;
         private Weapon _weapon;
         private GameObject _raceModel;
+        private PlayerState _state = PlayerState.Preparing;
 
         public PlayerMovement Movement => movement;
         public HealthComponent Health => health;
         public TeamComponent Team => team;
         public RaceInfo Race { get; private set; }
-        public Weapon Weapon => _weapon;
+        public BotAttackHints WeaponAttackHints => _weapon.BotAttackHints;
+        public PlayerState State => _state;
 
         private void Awake()
         {
@@ -51,7 +53,7 @@ namespace TowerDefence.Game.Units
 
         public void Tick(float deltaTime)
         {
-            if (health.IsDead) return;
+            if (_state == PlayerState.Dead) return;
 
             UpdateInput();
             _weapon?.AttackTrigger.Tick(deltaTime);
@@ -79,17 +81,27 @@ namespace TowerDefence.Game.Units
 
         public void SetRace(RaceInfo race)
         {
-            Race = race;
-            _raceModel = Instantiate(race.Prefab, rotationRoot, false);
+            Race = race ?? throw new ArgumentNullException(nameof(race));
+            
+            var newRaceModel = Instantiate(race.Prefab, rotationRoot, false);
+            if (_raceModel != null)
+            {
+                if (_weapon != null) _weapon.transform.SetParent(newRaceModel.transform, false);
+                Destroy(_raceModel.gameObject);
+            }
+            _raceModel = newRaceModel;
             movement.Initialize(_raceModel.transform);
             uiView.SetRaceSprite(Race.Icon);
         }
 
         public void SetWeapon(Weapon weapon)
         {
+            if (weapon == null) throw new ArgumentNullException(nameof(weapon));
+            if (_weapon != null) Destroy(_weapon.gameObject);
+
             _weapon = weapon;
             _weapon.SetOwner(this);
-            _weapon.transform.SetParent(_raceModel.transform, false);
+            _weapon.transform.SetParent(_raceModel?.transform ?? this.transform, false);
         }
 
 #endregion
@@ -106,24 +118,28 @@ namespace TowerDefence.Game.Units
 
         public void SetReadyState()
         {
+            _state = PlayerState.Active;
             // TODO: prepare for ingame
         }
 
         // In this example we don't use that state, player continue from where he is, just with another team
         public void SetDeadState()
         {
+            _state = PlayerState.Dead;
             _weapon.AttackTrigger.Reset();
             // TODO: trigger death animation
         }
 
         public void SetWinState()
         {
+            _state = PlayerState.Won;
             _weapon.AttackTrigger.Reset();
             // TODO: trigger some "win" animation
         }
 
         public void SetLoseState()
         {
+            _state = PlayerState.Lost;
             _weapon.AttackTrigger.Reset();
             // TODO: trigger some "lose" animation
         }

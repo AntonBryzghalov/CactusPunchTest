@@ -1,18 +1,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace TowerDefence.Game.Units
+namespace TowerDefence.Game.Units.Player
 {
     public class PlayerRegistry : IPlayerRegistry
     {
-        private readonly List<Player> _players = new();
-        public IReadOnlyList<Player> Players => _players;
+        private readonly List<PlayerComponent> _players = new();
+        public IReadOnlyList<PlayerComponent> Players => _players;
 
         public void Init()
         {
         }
 
-        public void RegisterPlayer(Player player)
+        public void RegisterPlayer(PlayerComponent player)
         {
             if (_players.Contains(player))
             {
@@ -23,7 +23,7 @@ namespace TowerDefence.Game.Units
             _players.Add(player);
         }
 
-        public void UnregisterPlayer(Player player)
+        public void UnregisterPlayer(PlayerComponent player)
         {
             _players.Remove(player);
         }
