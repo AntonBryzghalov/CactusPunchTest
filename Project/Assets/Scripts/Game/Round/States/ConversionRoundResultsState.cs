@@ -1,34 +1,36 @@
 using Cysharp.Threading.Tasks;
 using TowerDefence.Core;
-using TowerDefence.Game.Round.Rules;
+using TowerDefence.Game.Units;
 using TowerDefence.UI;
 using TowerDefence.UI.CommonScreens;
 using UnityEngine;
 
 namespace TowerDefence.Game.Round.States
 {
-    public class RoundEndState : IState
+    public sealed class ConversionRoundResultsState : IRoundState
     {
-        private readonly IRoundManager _roundManager;
         private readonly bool _win;
         private readonly float _duration;
         private readonly IScreenRouter _screenRouter;
         private readonly IUIRegistry _uiRegistry;
+        private readonly IPlayerRegistry _playerRegistry;
         private float _timer;
-        
 
-        public RoundEndState(IRoundManager roundManager, bool win, float duration)
+        public RoundStateType Intention { get; private set; }
+        public object Payload { get; }
+
+        public ConversionRoundResultsState(bool win, float duration)
         {
-            _roundManager = roundManager;
             _win = win;
             _duration = duration;
             _screenRouter = Services.Get<IScreenRouter>();
             _uiRegistry = Services.Get<IUIRegistry>();
+            _playerRegistry = Services.Get<IPlayerRegistry>();
         }
 
         public void OnEnter()
         {
-            Debug.Log($"{nameof(RoundEndState)} started!");
+            Debug.Log($"{nameof(ConversionRoundResultsState)} started!");
 
             _timer = _duration;
             if (_win)
@@ -43,9 +45,8 @@ namespace TowerDefence.Game.Round.States
 
         public void OnExit()
         {
-            _roundManager.DespawnAllPlayers();
             _screenRouter.HideModalAsync().AsUniTask().Forget();
-            Debug.Log($"{nameof(RoundEndState)} ended!");
+            Debug.Log($"{nameof(ConversionRoundResultsState)} ended!");
         }
 
         public void Tick(float deltaTime)
@@ -54,16 +55,13 @@ namespace TowerDefence.Game.Round.States
 
             if (_timer <= 0)
             {
-                _roundManager.SetPostRoundState();
-
-                var stateMachine = Services.Get<IStateMachine>();
-                stateMachine.SetState(new GameOverState());
+                Intention = RoundStateType.PostRound;
             }
         }
 
         private void ShowWin()
         {
-            _roundManager.RealPlayer.SetWinState();
+            _playerRegistry.Players[0].SetWinState();
             if (_uiRegistry.TryGetScreen("MessageScreen", out SimpleCaptionScreen screen))
             {
                 screen.SetData("You Win!");
@@ -73,7 +71,7 @@ namespace TowerDefence.Game.Round.States
 
         private void ShowLose()
         {
-            _roundManager.RealPlayer.SetLoseState();
+            _playerRegistry.Players[0].SetLoseState();
             if (_uiRegistry.TryGetScreen("MessageScreen", out SimpleCaptionScreen screen))
             {
                 screen.SetData("You Lose!");

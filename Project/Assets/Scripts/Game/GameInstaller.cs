@@ -1,6 +1,7 @@
 using TowerDefence.Core;
 using TowerDefence.Data;
 using TowerDefence.Game.AI;
+using TowerDefence.Game.Units;
 using TowerDefence.Systems;
 using TowerDefence.UI;
 
@@ -19,6 +20,7 @@ namespace TowerDefence.Game
             services.RegisterLazy<IScreenRouter, ScreenRouter>();
             services.RegisterLazy<IUIRegistry, UIRegistry>();
             services.RegisterLazy<IGameContext, GameContext>();
+            services.RegisterLazy<IPlayerRegistry, PlayerRegistry>();
             services.RegisterLazy<IAIManager, AIManager>();
         }
     }

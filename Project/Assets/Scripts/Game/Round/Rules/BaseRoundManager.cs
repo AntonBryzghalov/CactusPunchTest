@@ -1,21 +1,22 @@
+using System;
 using TowerDefence.Core;
 using TowerDefence.Game.AI;
 using TowerDefence.Game.AI.Navigation;
 using TowerDefence.Game.Attack;
 using TowerDefence.Game.Controls;
+using TowerDefence.Game.Events;
 using TowerDefence.Game.Round.States;
 using TowerDefence.Game.Settings;
 using TowerDefence.Game.Spawning;
 using TowerDefence.Game.Teams;
 using TowerDefence.Game.Units;
 using TowerDefence.Infrastructure.Factory;
-using TowerDefence.Providers;
 using Unity.Cinemachine;
 using UnityEngine;
 
 namespace TowerDefence.Game.Round.Rules
 {
-    public abstract class BaseRoundManager : MonoBehaviour, IRoundManager
+    public abstract class BaseRoundManager : MonoBehaviour, IRoundManager, ITickable
     {
         [Header("Scene References")]
         [SerializeField] protected CinemachineCamera cinemachineCamera;
@@ -33,15 +34,14 @@ namespace TowerDefence.Game.Round.Rules
         [SerializeField, Min(0f)] private float warmupDuration = 1f;
         [SerializeField, Min(0f)] protected float waitForGameOverDuration = 3f;
 
-        private PlayerBuilder _playerBuilder;
+        protected readonly RoundStateMachine stateMachine = new ();
+        private IRoundState _warmupState;
 
+        private IEventBus _eventBus;
         private ITickDispatcher _tickDispatcher;
         private IAIManager _aiManager;
-
-        protected readonly StateMachine _stateMachine = new StateMachine();
-        private IState _warmupState;
-
-        protected IPlayerRegistry _playerRegistry;
+        private PlayerBuilder _playerBuilder;
+        private IPlayerRegistry _playerRegistry;
         private IFactory<IWaypointGenerator> _waypointGeneratorFactory;
         private BotStatesFactory _botStatesFactory;
         private BotFactory _botFactory;
@@ -58,48 +58,31 @@ namespace TowerDefence.Game.Round.Rules
         private void OnDestroy()
         {
             ServiceLocator.Instance?.Unregister<IRoundManager>();
-            _tickDispatcher.Unsubscribe(_stateMachine.Tick);
-            _stateMachine.SetState(null);
+            _tickDispatcher.Unsubscribe(Tick);
+            stateMachine.SetState(null);
         }
 
         public void Init()
         {
             DoComposition();
 
+            _eventBus = Services.Get<IEventBus>();
             _aiManager = Services.Get<IAIManager>();
             _tickDispatcher = Services.Get<ITickDispatcher>();
-            _tickDispatcher.Subscribe(_stateMachine.Tick);
-            _warmupState = new WarmupState(this, _playerRegistry, warmupDuration);
+            _tickDispatcher.Subscribe(Tick);
+            _warmupState = new WarmupState(this, warmupDuration);
         }
 
-        // TODO: Move to SceneCompositionRoot
-        private void DoComposition()
+        public void Tick(float deltaTime)
         {
-            _playerRegistry = new PlayerRegistry();
-            _waypointGeneratorFactory = new SquarePlaneRandomPositionGeneratorFactory(
-                Vector2.one * -25f,
-                Vector2.one * 25f,
-                0f);
-
-            _botStatesFactory = new BotStatesFactory(botsSettings, _playerRegistry, _waypointGeneratorFactory.Create());
-            _botFactory = new BotFactory(_botStatesFactory);
+            stateMachine.Tick(deltaTime);
+            if (stateMachine.CurrentState == null || stateMachine.CurrentState.Intention == RoundStateType.None) return;
+            HandleIntention(stateMachine.CurrentState.Intention, stateMachine.CurrentState.Payload);
         }
 
-        public void SpawnAllPlayers()
+        public void StartRound()
         {
-            for (int i = 0; i < maxPlayers; i++)
-            {
-                var spawnPoint = spawnPoints[i % spawnPoints.Length];
-                int teamIndex = i % teamSettings.Teams.Length;
-                bool isRealPlayer = i == 0;
-                SpawnPlayer(spawnPoint, teamIndex, isRealPlayer);
-            }
-        }
-
-        public void DespawnAllPlayers()
-        {
-            _playerRegistry.DisposeAllPlayers();
-            _aiManager.DisposeAllBots();
+            HandleIntention(RoundStateType.Warmup, null);
         }
 
         public void SetCameraTarget(Transform target)
@@ -111,18 +94,62 @@ namespace TowerDefence.Game.Round.Rules
             };
         }
 
-        public void SetPlayerInputActive(bool active)
+        // TODO: Move to SceneCompositionRoot
+        private void DoComposition()
         {
-            foreach (var player in _playerRegistry.Players)
-            {
-                player.SetInputEnabled(active);
-            }
+            _playerRegistry = new PlayerRegistry();
+            _waypointGeneratorFactory = new SquarePlaneRandomPositionGeneratorFactory(
+                Vector2.one * -25f,
+                Vector2.one * 25f,
+                0f);
 
-            uiControls.gameObject.SetActive(active);
+            _botStatesFactory = new BotStatesFactory(botsSettings, _waypointGeneratorFactory.Create());
+            _botFactory = new BotFactory(_botStatesFactory);
+        }
+
+        private void HandleIntention(RoundStateType intention, object payload)
+        {
+            switch (intention)
+            {
+                case RoundStateType.Warmup:
+                    SpawnAllPlayers();
+                    stateMachine.SetState(_warmupState);
+                    break;
+                case RoundStateType.Match:
+                    SetPlayerInputActive(true);
+                    stateMachine.SetState(GetMatchState());
+                    _eventBus.Publish(new MatchStartEvent());
+                    break;
+                case RoundStateType.RoundResults:
+                    SetPlayerInputActive(false);
+                    _eventBus.Publish(new MatchEndEvent());
+                    var roundResultsState = GetRoundResultsState((RoundResults)payload);
+                    stateMachine.SetState(roundResultsState);
+                    break;
+                case RoundStateType.PostRound:
+                    DespawnAllPlayers();
+                    stateMachine.SetState(null);
+                    var globalStateMachine = Services.Get<IStateMachine>();
+                    globalStateMachine.SetState(new GameOverState());
+                    break;
+                default: throw new ArgumentOutOfRangeException(nameof(intention), intention, null);
+            }
+        }
+
+        private void SpawnAllPlayers()
+        {
+            for (int i = 0; i < maxPlayers; i++)
+            {
+                var spawnPoint = spawnPoints[i % spawnPoints.Length];
+                int teamIndex = i % teamSettings.Teams.Length;
+                bool isRealPlayer = i == 0;
+                var player = SpawnPlayer(spawnPoint, teamIndex, isRealPlayer);
+                player.name = $"Player{i}_{(isRealPlayer ? "real" : "bot")}";
+            }
         }
 
         // TODO: move to PlayerSpawner or something like this
-        private void SpawnPlayer(SpawnPointComponent spawnPoint, int teamIndex, bool isRealPlayer)
+        private Player SpawnPlayer(SpawnPointComponent spawnPoint, int teamIndex, bool isRealPlayer)
         {
             var spawnTransform = spawnPoint.transform;
             var race = raceSettings.GetRandom();
@@ -148,16 +175,28 @@ namespace TowerDefence.Game.Round.Rules
                 var bot = _botFactory.CreateBot(player);
                 _aiManager.RegisterBot(bot);
             }
+
+            return player;
         }
 
-        public void SetWarmupState() => _stateMachine.SetState(_warmupState);
+        private void DespawnAllPlayers()
+        {
+            _playerRegistry.DisposeAllPlayers();
+            _aiManager.DisposeAllBots();
+        }
 
-        public void SetMatchState() => _stateMachine.SetState(GetMatchState());
+        private void SetPlayerInputActive(bool active)
+        {
+            foreach (var player in _playerRegistry.Players)
+            {
+                player.SetInputEnabled(active);
+            }
 
-        protected abstract IState GetMatchState();
+            uiControls.gameObject.SetActive(active);
+        }
 
-        public abstract void SetRoundEndState(RoundResults results);
+        protected abstract IRoundState GetMatchState();
 
-        public void SetPostRoundState() => _stateMachine.SetState(null);
+        protected abstract IRoundState GetRoundResultsState(RoundResults results);
     }
 }

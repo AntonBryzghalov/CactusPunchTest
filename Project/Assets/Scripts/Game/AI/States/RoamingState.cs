@@ -1,4 +1,5 @@
 using System;
+using TowerDefence.Core;
 using TowerDefence.ExtensionMethods;
 using TowerDefence.Game.AI.Navigation;
 using TowerDefence.Game.Controls;
@@ -13,8 +14,8 @@ namespace TowerDefence.Game.AI.States
         private readonly BufferPlayerInputSource _inputSource;
         private readonly Player _botPlayer;
         private readonly IProvider<Vector3> _botPosition;
-        private readonly IPlayerRegistry _playerRegistry;
         private readonly IWaypointGenerator _waypointGenerator;
+        private readonly IPlayerRegistry _playerRegistry;
         private readonly float _waypointDistanceThresholdSquared;
         private readonly float _visionRangeSquared;
         private IProvider<Vector3> _currentMoveTarget;
@@ -25,7 +26,6 @@ namespace TowerDefence.Game.AI.States
         public RoamingState(
             BufferPlayerInputSource botInputSource,
             Player botPlayer,
-            IPlayerRegistry playerRegistry,
             IWaypointGenerator waypointGenerator,
             float waypointDistanceThreshold,
             float visionRange)
@@ -33,8 +33,8 @@ namespace TowerDefence.Game.AI.States
             _inputSource = botInputSource ?? throw new ArgumentNullException(nameof(botInputSource));
             _botPlayer = botPlayer ?? throw new ArgumentNullException(nameof(botPlayer));
             _botPosition = new TransformPositionProvider(botPlayer.transform);
-            _playerRegistry = playerRegistry ?? throw new ArgumentNullException(nameof(playerRegistry));
             _waypointGenerator = waypointGenerator ?? throw new ArgumentNullException(nameof(waypointGenerator));
+            _playerRegistry = Services.Get<IPlayerRegistry>();
             _waypointDistanceThresholdSquared = waypointDistanceThreshold * waypointDistanceThreshold;
             _visionRangeSquared = visionRange * visionRange;
         }

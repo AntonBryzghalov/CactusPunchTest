@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace TowerDefence.Game.Round.States
 {
-    public class WarmupState : IState
+    public class WarmupState : IRoundState
     {
         private readonly IRoundManager _roundManager;
         private readonly IPlayerRegistry _playerRegistry;
@@ -17,11 +17,14 @@ namespace TowerDefence.Game.Round.States
         private readonly IUIRegistry _uiRegistry;
         private float _timer;
 
-        public WarmupState(IRoundManager roundManager, IPlayerRegistry playerRegistry, float warmupDuration)
+        public RoundStateType Intention { get; private set; }
+        public object Payload { get; }
+
+        public WarmupState(IRoundManager roundManager, float warmupDuration)
         {
             _roundManager = roundManager;
             _warmupDuration = warmupDuration;
-            _playerRegistry = playerRegistry;
+            _playerRegistry = Services.Get<IPlayerRegistry>();
             _screenRouter = Services.Get<IScreenRouter>();
             _uiRegistry = Services.Get<IUIRegistry>();
         }
@@ -29,7 +32,6 @@ namespace TowerDefence.Game.Round.States
         public void OnEnter()
         {
             _timer = _warmupDuration;
-            _roundManager.SpawnAllPlayers();
             foreach (var player in _playerRegistry.Players)
             {
                 player.SetPrepareState();
@@ -57,7 +59,7 @@ namespace TowerDefence.Game.Round.States
 
             if (_timer <= 0)
             {
-                _roundManager.SetMatchState();
+                Intention = RoundStateType.Match;
             }
         }
     }

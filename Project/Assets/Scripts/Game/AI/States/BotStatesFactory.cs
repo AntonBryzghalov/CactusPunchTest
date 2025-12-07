@@ -11,13 +11,11 @@ namespace TowerDefence.Game.AI
     public class BotStatesFactory
     {
         private readonly BotsSettings settings;
-        private readonly IPlayerRegistry _playerRegistry;
         private readonly IWaypointGenerator _waypointGenerator;
 
-        public BotStatesFactory(BotsSettings settings, IPlayerRegistry playerRegistry, IWaypointGenerator waypointGenerator)
+        public BotStatesFactory(BotsSettings settings, IWaypointGenerator waypointGenerator)
         {
             this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
-            _playerRegistry = playerRegistry ?? throw new ArgumentNullException(nameof(playerRegistry));
             _waypointGenerator = waypointGenerator ?? throw new ArgumentNullException(nameof(waypointGenerator));
         }
 
@@ -28,7 +26,7 @@ namespace TowerDefence.Game.AI
                 ? durationRange.x
                 : UnityEngine.Random.Range(durationRange.x, durationRange.y);
 
-            return new IdleState(botInputSource, botPlayer, _playerRegistry, duration, settings.VisionRange);
+            return new IdleState(botInputSource, botPlayer, duration, settings.VisionRange);
         }
 
         public IBotState CreateDeadState(BufferPlayerInputSource botInputSource, Player botPlayer)
@@ -43,7 +41,6 @@ namespace TowerDefence.Game.AI
             return new RoamingState(
                 botInputSource,
                 botPlayer,
-                _playerRegistry,
                 _waypointGenerator,
                 settings.WaypointDistanceThreshold,
                 settings.VisionRange);

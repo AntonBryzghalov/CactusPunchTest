@@ -1,21 +1,20 @@
-using TowerDefence.Core;
 using TowerDefence.Game.Round.States;
 
 namespace TowerDefence.Game.Round.Rules
 {
     public class ConversionClashRoundManager : BaseRoundManager
     {
-        private IState _matchState;
+        private IRoundState _matchState;
 
-        public override void SetRoundEndState(RoundResults results)
+        protected override IRoundState GetMatchState()
         {
-            var isPlayerWon = results.playerWinStates.TryGetValue(RealPlayer, out var playerWon) && playerWon;
-            _stateMachine.SetState(new RoundEndState(this, isPlayerWon, waitForGameOverDuration));
+            return _matchState ??= new ConversionMatchState(this, teamSettings);
         }
 
-        protected override IState GetMatchState()
+        protected override IRoundState GetRoundResultsState(RoundResults results)
         {
-            return _matchState ??= new ConversionMatchState(this, teamSettings, _playerRegistry);
+            var isPlayerWon = results.playerWinStates.TryGetValue(RealPlayer, out var playerWon) && playerWon;
+            return new ConversionRoundResultsState(isPlayerWon, waitForGameOverDuration);
         }
     }
 }

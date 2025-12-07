@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace TowerDefence.Game.Round.States
 {
-    public class ConversionMatchState : IState
+    public class ConversionMatchState : IRoundState
     {
         private readonly IRoundManager _roundManager;
         private readonly ITeamRegistry _teamRegistry;
@@ -15,20 +15,20 @@ namespace TowerDefence.Game.Round.States
         private readonly IEventBus _eventBus;
         private RoundResults _roundResults;
 
-        public ConversionMatchState(IRoundManager roundManager, ITeamRegistry teamRegistry, IPlayerRegistry playerRegistry)
+        public RoundStateType Intention { get; private set; }
+        public object Payload { get; private set; }
+
+        public ConversionMatchState(IRoundManager roundManager, ITeamRegistry teamRegistry)
         {
             _roundManager = roundManager;
             _teamRegistry = teamRegistry;
-            _playerRegistry = playerRegistry;
+            _playerRegistry = Services.Get<IPlayerRegistry>();
             _eventBus = Services.Get<IEventBus>();
         }
 
         public void OnEnter()
         {
             _roundResults = new RoundResults();
-
-            _roundManager.SetPlayerInputActive(true);
-            _eventBus.Publish(new RoundStartEvent());
             foreach (var player in _playerRegistry.Players)
             {
                 player.SetReadyState();
@@ -45,8 +45,6 @@ namespace TowerDefence.Game.Round.States
                 player.Health.OnKilled -= OnPlayerKilled;
             }
 
-            _roundManager.SetPlayerInputActive(false);
-            _eventBus.Publish(new RoundEndEvent());
             Debug.Log("Conversion Match ended!");
         }
 
@@ -84,7 +82,8 @@ namespace TowerDefence.Game.Round.States
             if (allPlayersOfTheSameTeam)
             {
                 _roundResults.playerWinStates[attacker] = true;
-                _roundManager.SetRoundEndState(_roundResults);
+                Intention = RoundStateType.RoundResults;
+                Payload = _roundResults;
             }
         }
 

@@ -8,8 +8,8 @@ namespace TowerDefence.Game.AI
 {
     public interface IBot : ITickable
     {
-        void OnRoundStart();
-        void OnRoundEnd();
+        void OnMatchStart();
+        void OnMatchEnd();
     }
 
     public class SimpleBot : IBot
@@ -37,12 +37,12 @@ namespace TowerDefence.Game.AI
             SwitchState(currentState.Intention, currentState.Payload);
         }
 
-        public void OnRoundStart()
+        public void OnMatchStart()
         {
             _stateMachine.SetState(_statesFactory.CreateRoamingState(_inputSource, _player));
         }
 
-        public void OnRoundEnd()
+        public void OnMatchEnd()
         {
             _stateMachine.SetState(null);
         }

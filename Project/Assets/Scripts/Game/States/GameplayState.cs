@@ -37,7 +37,7 @@ namespace TowerDefence.Game
 
             if (Services.TryGet<IRoundManager>(out var roundManager))
             {
-                roundManager.SetWarmupState();
+                roundManager.StartRound();
             }
             else
             {

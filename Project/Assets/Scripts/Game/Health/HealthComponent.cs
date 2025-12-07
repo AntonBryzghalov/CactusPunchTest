@@ -18,7 +18,6 @@ namespace TowerDefence.Game.Health
         public Player Owner { get; private set; }
         private IEventBus EventBus => _eventBus ??= Services.Get<IEventBus>();
 
-
         public event Action<float, float> OnHealthChanged; // current, max
         public event Action<Player, Player> OnKilled; // attacker, victim
 

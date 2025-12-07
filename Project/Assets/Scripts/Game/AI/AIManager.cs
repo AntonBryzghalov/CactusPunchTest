@@ -20,8 +20,17 @@ namespace TowerDefence.Game.AI
         {
             if (Services.TryGet<IEventBus>(out var eventBus))
             {
-                _roundStartToken = eventBus.Subscribe<RoundStartEvent>(OnRoundStart);
-                _roundStartToken = eventBus.Subscribe<RoundEndEvent>(OnRoundEnd);
+                _roundStartToken = eventBus.Subscribe<MatchStartEvent>(OnMatchStart);
+                _roundStartToken = eventBus.Subscribe<MatchEndEvent>(OnMatchEnd);
+            }
+        }
+
+        public void Dispose()
+        {
+            if (Services.TryGet<IEventBus>(out var eventBus))
+            {
+                if (_roundStartToken != null) eventBus.Unsubscribe(_roundStartToken);
+                if (_roundEndToken != null) eventBus.Unsubscribe(_roundEndToken);
             }
         }
 
@@ -59,16 +68,7 @@ namespace TowerDefence.Game.AI
             _isBufferCollectionDirty = true;
         }
 
-        public void Dispose()
-        {
-            if (Services.TryGet<IEventBus>(out var eventBus))
-            {
-                if (_roundStartToken != null) eventBus.Unsubscribe(_roundStartToken);
-                if (_roundEndToken != null) eventBus.Unsubscribe(_roundEndToken);
-            }
-        }
-
-        private void OnRoundStart(RoundStartEvent _)
+        private void OnMatchStart(MatchStartEvent _)
         {
             if (_subscribedForTick) throw new InvalidOperationException($"{nameof(AIManager)} is subscribed to tick already");
 
@@ -76,16 +76,16 @@ namespace TowerDefence.Game.AI
             tickDispatcher.Subscribe(Tick);
             _subscribedForTick = true;
             foreach (var bot in _bots)
-                bot.OnRoundStart();
+                bot.OnMatchStart();
         }
 
-        private void OnRoundEnd(RoundEndEvent _)
+        private void OnMatchEnd(MatchEndEvent _)
         {
             var tickDispatcher = Services.Get<ITickDispatcher>();
             tickDispatcher.Unsubscribe(Tick);
             _subscribedForTick = false;
             foreach (var bot in _bots)
-                bot.OnRoundEnd();
+                bot.OnMatchEnd();
         }
 
         public void Tick(float deltaTime)

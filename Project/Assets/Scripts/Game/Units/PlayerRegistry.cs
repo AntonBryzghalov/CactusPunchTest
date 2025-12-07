@@ -8,6 +8,10 @@ namespace TowerDefence.Game.Units
         private readonly List<Player> _players = new();
         public IReadOnlyList<Player> Players => _players;
 
+        public void Init()
+        {
+        }
+
         public void RegisterPlayer(Player player)
         {
             if (_players.Contains(player))

@@ -1,4 +1,5 @@
 using System;
+using TowerDefence.Core;
 using TowerDefence.Game.AI.States;
 using TowerDefence.Game.Controls;
 using TowerDefence.Game.Units;
@@ -23,13 +24,12 @@ namespace TowerDefence.Game.AI
         public IdleState(
             BufferPlayerInputSource botInputSource,
             Player botPlayer,
-            IPlayerRegistry playerRegistry,
             float duration,
             float visionRange)
         {
             _inputSource = botInputSource ?? throw new ArgumentNullException(nameof(botInputSource));
             _botPlayer = botPlayer ?? throw new ArgumentNullException(nameof(botPlayer));
-            _playerRegistry = playerRegistry ?? throw new ArgumentNullException(nameof(playerRegistry));
+            _playerRegistry = Services.Get<IPlayerRegistry>();
             _botPosition = new TransformPositionProvider(_botPlayer.transform);
             _duration = duration;
             _visionRangeSquared = visionRange * visionRange;
@@ -66,7 +66,7 @@ namespace TowerDefence.Game.AI
             }
         }
 
-        private void OnHealthChanged(float before, float after)
+        private void OnHealthChanged(float currentHealth, float maxHealth)
         {
             Intention = BotStateType.Roaming;
         }
